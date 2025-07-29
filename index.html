@@ -531,7 +531,7 @@
             playSound('achievement');
         }
         async function unlockAchievement(achievementId) {
-            if (!currentGoal.unlockedAchievements.includes(achievementId)) {
+            if (currentGoal && currentGoal.unlockedAchievements && !currentGoal.unlockedAchievements.includes(achievementId)) {
                 currentGoal.unlockedAchievements.push(achievementId);
                 await saveGoal();
                 showAchievementUnlockedModal(achievementId);
@@ -587,7 +587,6 @@
         // --- FUNÇÕES PRINCIPAIS DO APP ---
         function renderGrid() {
             depositsGrid.innerHTML = '';
-            // FIX: Check if currentGoal.deposits is iterable before spreading
             const deposits = Array.isArray(currentGoal.deposits) ? currentGoal.deposits : [];
             const shuffledDeposits = [...deposits].sort(() => Math.random() - 0.5);
             shuffledDeposits.forEach((value, index) => {
@@ -710,9 +709,7 @@
                 renderThemeSelectors();
                 await loadGoal();
                 
-                // FIX: Check if a valid goal exists (with a 'deposits' array)
                 if (currentGoal && Array.isArray(currentGoal.deposits)) {
-                    // Initialize missing fields for older data structures
                     if (!currentGoal.unlockedAchievements) currentGoal.unlockedAchievements = [];
                     if (!currentGoal.depositStreak) currentGoal.depositStreak = { current: 0, lastDepositDate: null };
                     if (!currentGoal.themesUsed) currentGoal.themesUsed = [];
@@ -724,7 +721,6 @@
                     renderGrid(); 
                     updateUI();
                 } else {
-                    // No valid goal, show setup screen but preserve theme if it exists
                     const savedTheme = currentGoal ? currentGoal.theme : 'neon-pink';
                     applyTheme(savedTheme);
                     setupScreen.classList.remove('hidden');
@@ -755,6 +751,7 @@
         confirmBtn.addEventListener('click', async () => { if (typeof confirmAction === 'function') await confirmAction(); });
         cancelBtn.addEventListener('click', hideModal);
         modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+        motivationCloseBtn.addEventListener('click', hideMotivationModal);
         motivationModal.addEventListener('click', (e) => { if (e.target === motivationModal) hideMotivationModal(); });
 
         loginBtn.addEventListener('click', async () => {
