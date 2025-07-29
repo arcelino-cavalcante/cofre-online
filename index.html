@@ -79,7 +79,8 @@
         .neon-button {
              background-color: var(--accent-bg-medium);
              border: 1px solid var(--secondary-neon);
-             color: var(--primary-neon);
+             color: var(--text-color);
+             text-shadow: 0 0 4px var(--primary-neon);
              transition: all 0.3s ease;
         }
         .neon-button:hover {
@@ -334,10 +335,13 @@
         const ACHIEVEMENTS = {
             'firstDeposit': { name: 'Pé-quente', desc: 'Fazer o primeiro depósito.', icon: '🏆' },
             'depositStreak7': { name: 'Em Chamas!', desc: 'Fazer depósitos por 7 dias seguidos.', icon: '🔥' },
+            'depositStreak30': { name: 'Foco Total', desc: 'Fazer depósitos por 30 dias seguidos.', icon: '🏅' },
             'goalCompleted': { name: 'Rei/Rainha da Economia', desc: 'Completar a primeira meta.', icon: '👑' },
             'save100': { name: 'Economista', desc: 'Acumular R$ 100 pela primeira vez.', icon: '💰' },
             'save500': { name: 'Investidor', desc: 'Acumular R$ 500 pela primeira vez.', icon: '💎' },
+            'save1000': { name: 'Magnata', desc: 'Acumular R$ 1000 pela primeira vez.', icon: '🏦' },
             'deposit50': { name: 'Mão de Vaca', desc: 'Fazer um total de 50 depósitos.', icon: '🐮' },
+            'deposit100': { name: 'Formiguinha', desc: 'Fazer um total de 100 depósitos.', icon: '🐜' },
             'allThemes': { name: 'Colecionador de Cores', desc: 'Experimentar todos os temas de cores.', icon: '🎨' },
             'first10': { name: 'De grão em grão...', desc: 'Fazer 10 depósitos.', icon: '🌱'}
         };
@@ -556,8 +560,10 @@
             if (totalDeposits > 0) await unlockAchievement('firstDeposit');
             if (totalDeposits >= 10) await unlockAchievement('first10');
             if (totalDeposits >= 50) await unlockAchievement('deposit50');
+            if (totalDeposits >= 100) await unlockAchievement('deposit100');
             if (totalSaved >= 100) await unlockAchievement('save100');
             if (totalSaved >= 500) await unlockAchievement('save500');
+            if (totalSaved >= 1000) await unlockAchievement('save1000');
             if (totalSaved >= currentGoal.total) await unlockAchievement('goalCompleted');
             if ((currentGoal.themesUsed || []).length >= 4) await unlockAchievement('allThemes');
             
@@ -575,6 +581,9 @@
                 currentGoal.depositStreak.lastDepositDate = today;
                 if (currentGoal.depositStreak.current >= 7) {
                     await unlockAchievement('depositStreak7');
+                }
+                if (currentGoal.depositStreak.current >= 30) {
+                    await unlockAchievement('depositStreak30');
                 }
                 await saveGoal();
             }
