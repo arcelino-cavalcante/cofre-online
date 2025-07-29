@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhaeria - Alice Vasconcelos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para o tema neon e fontes */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #1a1a2e; /* Fundo escuro para destacar o neon */
+        }
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        .neon-text {
+            color: #f871b5;
+            text-shadow:
+                0 0 5px #f871b5,
+                0 0 10px #f871b5,
+                0 0 20px #f871b5,
+                0 0 40px #ec4899,
+                0 0 80px #ec4899;
+        }
+        .neon-box {
+            border: 2px solid #f871b5;
+            box-shadow: 0 0 10px #f871b5, 0 0 20px #ec4899 inset;
+            transition: all 0.3s ease-in-out;
+        }
+        .deposit-item {
+            background-color: rgba(236, 72, 153, 0.1);
+            border: 1px solid #ec4899;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .deposit-item.marked {
+            background-color: #ec4899;
+            color: #1a1a2e;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #f871b5;
+        }
+        .deposit-item.marked .flower-icon {
+            opacity: 1;
+            transform: scale(1) rotate(360deg);
+        }
+        .progress-bar-inner {
+            background: linear-gradient(90deg, #f871b5, #ec4899);
+            box-shadow: 0 0 5px #f871b5, 0 0 10px #ec4899;
+            transition: width 0.5s ease-in-out;
+        }
+        .flower-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            color: white;
+        }
+        /* Estilo para o modal de confirmação */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-white p-4 sm:p-6 md:p-8">
+
+    <div id="app" class="max-w-4xl mx-auto">
+        <!-- Cabeçalho -->
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center gap-3">
+                <!-- Ícone de flor SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256" class="neon-text"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>
+                <h1 class="font-pacifico text-4xl md:text-5xl neon-text">Minhaeria</h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256" class="neon-text"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>
+            </div>
+            <p class="text-pink-300 text-lg mt-2">de Alice Vasconcelos</p>
+        </header>
+
+        <!-- Painel de Progresso -->
+        <section id="progress-panel" class="neon-box bg-gray-900/50 rounded-2xl p-6 mb-8 text-center">
+            <h2 class="text-xl font-bold text-pink-300">Meu Progresso</h2>
+            <p id="total-saved" class="text-4xl font-bold neon-text my-3">R$ 0,00</p>
+            <div class="w-full bg-gray-700 rounded-full h-4">
+                <div id="progress-bar" class="progress-bar-inner h-4 rounded-full" style="width: 0%"></div>
+            </div>
+            <p id="progress-text" class="text-pink-300 mt-2">0% completo - Rumo aos R$ 1.000,00!</p>
+        </section>
+
+        <!-- Grade de Depósitos -->
+        <main id="deposits-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3">
+            <!-- Os itens de depósito serão gerados pelo JavaScript -->
+        </main>
+
+        <!-- Botão de Reiniciar -->
+        <footer class="text-center mt-8">
+            <button id="reset-button" class="neon-box text-pink-300 font-bold py-2 px-6 rounded-lg hover:bg-pink-500 hover:text-white hover:scale-105 transform transition">
+                Reiniciar Desafio
+            </button>
+        </footer>
+    </div>
+
+    <!-- Modal de Confirmação para Reiniciar -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-sm w-full text-center">
+            <h3 class="text-2xl font-bold neon-text mb-4">Atenção!</h3>
+            <p class="text-pink-200 mb-6">Você tem certeza que quer reiniciar o desafio? Todo o seu progresso será perdido.</p>
+            <div class="flex justify-center gap-4">
+                <button id="confirm-reset-btn" class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition">Sim, reiniciar</button>
+                <button id="cancel-reset-btn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURAÇÕES ---
+            const GOAL = 1000;
+            const STORAGE_KEY = 'minhaeriaAliceProgress';
+            // Desafio dos 100 depósitos: 20x R$20 (400), 40x R$10 (400), 40x R$5 (200) = R$1000
+            const DEPOSIT_VALUES = [
+                ...Array(20).fill(20),
+                ...Array(40).fill(10),
+                ...Array(40).fill(5)
+            ];
+
+            // --- ELEMENTOS DO DOM ---
+            const grid = document.getElementById('deposits-grid');
+            const totalSavedEl = document.getElementById('total-saved');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const resetButton = document.getElementById('reset-button');
+            const modal = document.getElementById('confirmation-modal');
+            const confirmResetBtn = document.getElementById('confirm-reset-btn');
+            const cancelResetBtn = document.getElementById('cancel-reset-btn');
+
+            let markedIndices = [];
+
+            // --- FUNÇÕES ---
+
+            // Função para embaralhar os valores do depósito
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+
+            // Função para renderizar a grade de depósitos
+            function renderGrid() {
+                grid.innerHTML = ''; // Limpa a grade antes de renderizar
+                const shuffledValues = shuffleArray([...DEPOSIT_VALUES]);
+
+                shuffledValues.forEach((value, index) => {
+                    const item = document.createElement('button');
+                    item.className = 'deposit-item h-12 w-full rounded-lg font-bold text-lg flex items-center justify-center';
+                    item.dataset.index = index;
+                    item.dataset.value = value;
+                    
+                    const valueSpan = document.createElement('span');
+                    valueSpan.textContent = value;
+
+                    // Ícone de flor para quando o item for marcado
+                    const flowerIcon = document.createElement('span');
+                    flowerIcon.className = 'flower-icon';
+                    flowerIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>`;
+                    
+                    item.appendChild(valueSpan);
+                    item.appendChild(flowerIcon);
+                    
+                    item.addEventListener('click', () => toggleMark(index));
+                    grid.appendChild(item);
+                });
+            }
+
+            // Função para marcar/desmarcar um item
+            function toggleMark(index) {
+                const itemEl = grid.querySelector(`[data-index='${index}']`);
+                if (markedIndices.includes(index)) {
+                    // Desmarcar
+                    markedIndices = markedIndices.filter(i => i !== index);
+                    itemEl.classList.remove('marked');
+                } else {
+                    // Marcar
+                    markedIndices.push(index);
+                    itemEl.classList.add('marked');
+                }
+                saveProgress();
+                updateUI();
+            }
+
+            // Função para atualizar a interface (total, barra de progresso)
+            function updateUI() {
+                // Atualiza os itens marcados na grade
+                document.querySelectorAll('.deposit-item').forEach(item => {
+                    const index = parseInt(item.dataset.index);
+                    if (markedIndices.includes(index)) {
+                        item.classList.add('marked');
+                    } else {
+                        item.classList.remove('marked');
+                    }
+                });
+
+                // Calcula o total salvo
+                const totalSaved = markedIndices.reduce((sum, index) => {
+                    const itemEl = grid.querySelector(`[data-index='${index}']`);
+                    return sum + parseFloat(itemEl.dataset.value);
+                }, 0);
+
+                // Calcula a porcentagem do progresso
+                const progressPercentage = (totalSaved / GOAL) * 100;
+
+                // Atualiza os elementos do DOM
+                totalSavedEl.textContent = `R$ ${totalSaved.toFixed(2).replace('.', ',')}`;
+                progressBar.style.width = `${progressPercentage}%`;
+                progressText.textContent = `${Math.floor(progressPercentage)}% completo - Rumo aos R$ ${GOAL.toFixed(2).replace('.', ',')}!`;
+
+                if (progressPercentage >= 100) {
+                    progressText.textContent = "Parabéns! Você alcançou sua meta de R$ 1.000,00!";
+                    totalSavedEl.classList.add('animate-pulse');
+                } else {
+                    totalSavedEl.classList.remove('animate-pulse');
+                }
+            }
+
+            // Função para salvar o progresso no localStorage
+            function saveProgress() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(markedIndices));
+            }
+
+            // Função para carregar o progresso do localStorage
+            function loadProgress() {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    markedIndices = JSON.parse(savedData);
+                }
+            }
+
+            // Função para reiniciar o desafio
+            function resetChallenge() {
+                markedIndices = [];
+                saveProgress();
+                updateUI();
+                hideModal();
+            }
+            
+            // Funções do Modal
+            function showModal() {
+                modal.classList.remove('hidden');
+            }
+
+            function hideModal() {
+                modal.classList.add('hidden');
+            }
+
+            // --- INICIALIZAÇÃO E EVENTOS ---
+            renderGrid();
+            loadProgress();
+            updateUI();
+            
+            resetButton.addEventListener('click', showModal);
+            confirmResetBtn.addEventListener('click', resetChallenge);
+            cancelResetBtn.addEventListener('click', hideModal);
+            // Fechar modal se clicar fora
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideModal();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
