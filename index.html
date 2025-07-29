@@ -21,40 +21,30 @@
             --accent-text: #1a1a2e;
             --accent-bg-light: rgba(236, 72, 153, 0.1);
             --accent-bg-medium: rgba(236, 72, 153, 0.2);
+            --text-shadow-style: 0 0 5px var(--primary-neon), 0 0 10px var(--primary-neon), 0 0 20px var(--secondary-neon), 0 0 40px var(--secondary-neon);
+            --box-shadow-style: 0 0 10px var(--primary-neon), 0 0 20px var(--secondary-neon) inset;
+            --button-text-color: #fce7f3; /* Light pink for high contrast */
+            --progress-bg: #374151;
         }
 
         [data-theme="galaxy"] {
-            --bg-color: #0f172a;
-            --text-color: #e2e8f0;
-            --primary-neon: #22d3ee;
-            --secondary-neon: #06b6d4;
-            --accent-color: #06b6d4;
-            --accent-text: #0f172a;
-            --accent-bg-light: rgba(34, 211, 238, 0.1);
-            --accent-bg-medium: rgba(34, 211, 238, 0.2);
+            --bg-color: #0f172a; --text-color: #e2e8f0; --primary-neon: #22d3ee; --secondary-neon: #06b6d4; --accent-color: #06b6d4; --accent-text: #0f172a; --accent-bg-light: rgba(34, 211, 238, 0.1); --accent-bg-medium: rgba(34, 211, 238, 0.2); --button-text-color: #ecfeff; --progress-bg: #1e293b;
         }
-
         [data-theme="nature"] {
-            --bg-color: #14211a;
-            --text-color: #d1fae5;
-            --primary-neon: #34d399;
-            --secondary-neon: #10b981;
-            --accent-color: #10b981;
-            --accent-text: #14211a;
-            --accent-bg-light: rgba(52, 211, 153, 0.1);
-            --accent-bg-medium: rgba(52, 211, 153, 0.2);
+            --bg-color: #14211a; --text-color: #d1fae5; --primary-neon: #34d399; --secondary-neon: #10b981; --accent-color: #10b981; --accent-text: #14211a; --accent-bg-light: rgba(52, 211, 153, 0.1); --accent-bg-medium: rgba(52, 211, 153, 0.2); --button-text-color: #f0fdf4; --progress-bg: #115e59;
         }
-
         [data-theme="magic"] {
-            --bg-color: #2c1d3d;
-            --text-color: #e9d5ff;
-            --primary-neon: #c084fc;
-            --secondary-neon: #a855f7;
-            --accent-color: #a855f7;
-            --accent-text: #2c1d3d;
-            --accent-bg-light: rgba(192, 132, 252, 0.1);
-            --accent-bg-medium: rgba(192, 132, 252, 0.2);
+            --bg-color: #2c1d3d; --text-color: #e9d5ff; --primary-neon: #c084fc; --secondary-neon: #a855f7; --accent-color: #a855f7; --accent-text: #2c1d3d; --accent-bg-light: rgba(192, 132, 252, 0.1); --accent-bg-medium: rgba(192, 132, 252, 0.2); --button-text-color: #faf5ff; --progress-bg: #3b0764;
         }
+        [data-theme="green"], [data-theme="blue"], [data-theme="white"], [data-theme="all-black"], [data-theme="gray"] {
+            --text-shadow-style: none;
+            --box-shadow-style: none;
+        }
+        [data-theme="green"] { --bg-color: #f0fdf4; --text-color: #064e3b; --primary-neon: #15803d; --secondary-neon: #166534; --accent-color: #16a34a; --accent-text: #ffffff; --accent-bg-light: #dcfce7; --accent-bg-medium: #bbf7d0; --button-text-color: #065f46; --progress-bg: #dcfce7; }
+        [data-theme="blue"] { --bg-color: #eff6ff; --text-color: #1e3a8a; --primary-neon: #2563eb; --secondary-neon: #1d4ed8; --accent-color: #2563eb; --accent-text: #ffffff; --accent-bg-light: #dbeafe; --accent-bg-medium: #bfdbfe; --button-text-color: #1e40af; --progress-bg: #dbeafe; }
+        [data-theme="white"] { --bg-color: #ffffff; --text-color: #111827; --primary-neon: #1f2937; --secondary-neon: #111827; --accent-color: #374151; --accent-text: #ffffff; --accent-bg-light: #f3f4f6; --accent-bg-medium: #e5e7eb; --button-text-color: #111827; --progress-bg: #e5e7eb; }
+        [data-theme="all-black"] { --bg-color: #000000; --text-color: #e5e7eb; --primary-neon: #f9fafb; --secondary-neon: #e5e7eb; --accent-color: #374151; --accent-text: #ffffff; --accent-bg-light: #1f2937; --accent-bg-medium: #374151; --button-text-color: #f9fafb; --progress-bg: #1f2937; }
+        [data-theme="gray"] { --bg-color: #f3f4f6; --text-color: #111827; --primary-neon: #1f2937; --secondary-neon: #111827; --accent-color: #374151; --accent-text: #ffffff; --accent-bg-light: #e5e7eb; --accent-bg-medium: #d1d5db; --button-text-color: #111827; --progress-bg: #d1d5db; }
 
         body {
             font-family: 'Quicksand', sans-serif;
@@ -62,25 +52,21 @@
             color: var(--text-color);
             transition: background-color 0.5s ease;
         }
+        body.login-theme { background-color: #e0f2fe; }
         .font-pacifico { font-family: 'Pacifico', cursive; }
         .neon-text {
             color: var(--primary-neon);
-            text-shadow:
-                0 0 5px var(--primary-neon),
-                0 0 10px var(--primary-neon),
-                0 0 20px var(--secondary-neon),
-                0 0 40px var(--secondary-neon);
+            text-shadow: var(--text-shadow-style);
         }
         .neon-box {
             border: 2px solid var(--primary-neon);
-            box-shadow: 0 0 10px var(--primary-neon), 0 0 20px var(--secondary-neon) inset;
+            box-shadow: var(--box-shadow-style);
             transition: all 0.3s ease-in-out;
         }
         .neon-button {
              background-color: var(--accent-bg-medium);
              border: 1px solid var(--secondary-neon);
-             color: var(--text-color);
-             text-shadow: 0 0 4px var(--primary-neon);
+             color: var(--button-text-color);
              transition: all 0.3s ease;
         }
         .neon-button:hover {
@@ -88,82 +74,31 @@
             color: var(--accent-text);
             box-shadow: 0 0 15px var(--primary-neon);
         }
-        .deposit-item {
-            background-color: var(--accent-bg-light);
-            border: 1px solid var(--secondary-neon);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .deposit-item.marked {
-            background-color: var(--accent-color);
-            color: var(--accent-text);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px var(--primary-neon);
-        }
-        .deposit-item.marked .flower-icon {
-            opacity: 1;
-            transform: scale(1) rotate(360deg);
-        }
-        .progress-bar-inner {
-            background: linear-gradient(90deg, var(--primary-neon), var(--secondary-neon));
-            box-shadow: 0 0 5px var(--primary-neon), 0 0 10px var(--secondary-neon);
-            transition: width 0.5s ease-in-out;
-        }
-        .flower-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            color: white;
-        }
+        .login-theme #login-screen .neon-box { background-color: white; border-color: #7dd3fc; box-shadow: none; }
+        .login-theme #login-screen .neon-text { color: #0ea5e9; text-shadow: none; }
+        .login-theme #login-screen .text-accent { color: #0369a1; }
+        .login-theme #login-screen input { background-color: #f0f9ff; border-color: #bae6fd; color: #0c4a6e; }
+        .login-theme #login-screen .neon-button { background-color: #0ea5e9; border-color: #0ea5e9; color: white; }
+        .login-theme #login-screen .neon-button:hover { background-color: #0284c7; }
+
+        .deposit-item { background-color: var(--accent-bg-light); border: 1px solid var(--secondary-neon); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .deposit-item.marked { background-color: var(--accent-color); color: var(--accent-text); transform: scale(1.05); box-shadow: 0 0 15px var(--primary-neon); }
+        .deposit-item.marked .flower-icon { opacity: 1; transform: scale(1) rotate(360deg); }
+        .progress-bar-track { background-color: var(--progress-bg); }
+        .progress-bar-inner { background: linear-gradient(90deg, var(--primary-neon), var(--secondary-neon)); box-shadow: 0 0 5px var(--primary-neon), 0 0 10px var(--secondary-neon); transition: width 0.5s ease-in-out; }
+        .flower-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); color: white; }
         .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); }
         .text-accent { color: var(--primary-neon); }
-        input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
-            background-color: var(--accent-bg-light);
-            border: 1px solid var(--secondary-neon);
-            color: white;
-        }
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 10px var(--primary-neon);
-        }
-        .theme-selector button {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
-            transition: transform 0.2s;
-        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"] { background-color: var(--accent-bg-light); border: 1px solid var(--secondary-neon); color: var(--text-color); }
+        input:focus { outline: none; box-shadow: 0 0 10px var(--primary-neon); }
+        .theme-selector button { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; transition: transform 0.2s; }
         .theme-selector button:hover { transform: scale(1.1); }
-        .theme-selector button.active {
-            transform: scale(1.2);
-            box-shadow: 0 0 10px white;
-        }
-        #loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-neon);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .achievement-item {
-            transition: all 0.3s ease;
-        }
-        .achievement-item.locked {
-            filter: grayscale(1);
-            opacity: 0.6;
-        }
-        .achievement-item.locked .text-4xl {
-            filter: blur(2px);
-        }
+        .theme-selector button.active { transform: scale(1.2); box-shadow: 0 0 10px white; }
+        #loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-neon); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .achievement-item { transition: all 0.3s ease; }
+        .achievement-item.locked { filter: grayscale(1); opacity: 0.6; }
+        .achievement-item.locked .text-4xl { filter: blur(2px); }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
@@ -194,11 +129,10 @@
         </div>
     </div>
 
-
     <!-- Tela de Configuração da Meta -->
     <div id="setup-screen" class="max-w-2xl mx-auto hidden">
         <header class="text-center mb-8">
-            <h1 class="font-pacifico text-4xl md:text-5xl neon-text">Crie sua Meta</h1>
+            <h1 id="setup-title" class="font-pacifico text-4xl md:text-5xl neon-text">Crie sua Meta</h1>
             <p class="text-accent text-lg mt-2">Vamos começar um novo desafio!</p>
         </header>
         <div class="neon-box bg-gray-900/50 rounded-2xl p-6 space-y-6">
@@ -219,7 +153,8 @@
                 <p class="text-accent">Total do Desafio:</p>
                 <p id="calculated-total" class="text-3xl font-bold neon-text">R$ 0,00</p>
             </div>
-            <button id="start-challenge-btn" class="w-full neon-button font-bold text-lg py-3 px-6 rounded-lg mt-4">Começar Desafio!</button>
+            <button id="start-challenge-btn" class="w-full neon-button font-bold text-lg py-3 px-6 rounded-lg mt-4">Salvar Meta</button>
+            <button id="logout-btn-setup" class="w-full text-accent font-semibold py-2 mt-2">Sair</button>
         </div>
         <footer class="text-center mt-8">
             <div id="theme-selector-setup" class="theme-selector flex justify-center items-center gap-4"></div>
@@ -235,7 +170,7 @@
         <section id="progress-panel" class="neon-box bg-gray-900/50 rounded-2xl p-6 mb-8 text-center">
             <h2 class="text-xl font-bold text-accent">Meu Progresso</h2>
             <p id="total-saved" class="text-4xl font-bold neon-text my-3">R$ 0,00</p>
-            <div class="w-full bg-gray-700 rounded-full h-4"><div id="progress-bar" class="progress-bar-inner h-4 rounded-full" style="width: 0%"></div></div>
+            <div class="w-full rounded-full h-4 progress-bar-track"><div id="progress-bar" class="progress-bar-inner h-4 rounded-full" style="width: 0%"></div></div>
             <p id="progress-text" class="text-accent mt-2"></p>
         </section>
         <main id="deposits-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3"></main>
@@ -244,7 +179,7 @@
                 <button id="achievements-btn" class="neon-button font-bold py-2 px-6 rounded-lg">🏆 Conquistas</button>
                 <button id="reports-btn" class="neon-button font-bold py-2 px-6 rounded-lg">Ver Gráficos</button>
                 <button id="reset-button" class="neon-button font-bold py-2 px-6 rounded-lg">Reiniciar Progresso</button>
-                <button id="new-goal-button" class="neon-button font-bold py-2 px-6 rounded-lg">Criar Nova Meta</button>
+                <button id="new-goal-button" class="neon-button font-bold py-2 px-6 rounded-lg">Apagar e Criar Nova</button>
                 <button id="logout-btn" class="bg-red-500/50 border border-red-500 text-red-300 font-bold py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white">Sair</button>
             </div>
             <div id="theme-selector-app" class="theme-selector flex justify-center items-center gap-4"></div>
@@ -327,30 +262,31 @@
 
         // --- DEFINIÇÕES DE JOGO ---
         const THEMES = {
-            'neon-pink': { name: 'Rosa Neon', color: '#f871b5' }, 'galaxy': { name: 'Azul Galáxia', color: '#22d3ee' }, 'nature': { name: 'Verde Natureza', color: '#34d399' }, 'magic': { name: 'Roxo Mágico', color: '#c084fc' }
+            'neon-pink': { name: 'Rosa Neon', color: '#f871b5' }, 'galaxy': { name: 'Azul Galáxia', color: '#22d3ee' }, 'nature': { name: 'Verde Natureza', color: '#34d399' }, 'magic': { name: 'Roxo Mágico', color: '#c084fc' }, 'blue': { name: 'Azul Clássico', color: '#3b82f6' }, 'green': { name: 'Verde Clássico', color: '#22c55e' }, 'gray': { name: 'Cinza', color: '#6b7280' }, 'white': { name: 'Branco', color: '#e5e7eb' }, 'all-black': { name: 'All Black', color: '#1f2937' }
         };
         const MOTIVATIONAL_MESSAGES = {
             5: "É isso aí! O primeiro passo é o mais importante. Continue assim!", 10: "Incrível! Você já alcançou 10% da sua meta. Cada depósito conta!", 15: "Você está pegando o ritmo! Continue focada e verá os resultados.", 20: "Um quinto do caminho já foi! Sua dedicação está fazendo a diferença.", 25: "Parabéns! Você chegou a 1/4 da sua meta. Você é imparável!", 30: "Olha só esse progresso! Você está cada vez mais perto.", 35: "Continue brilhando! Sua disciplina é sua maior aliada.", 40: "Uau! Quase na metade. O resultado final será muito gratificante.", 45: "Falta muito pouco para a metade! Você está mandando muito bem.", 50: "METADE DO CAMINHO! 🎉 Você é incrível! Comemore essa grande conquista.", 55: "A maior parte já foi! Agora é manter o foco na reta final.", 60: "Excelente! Você está construindo seu sonho, depósito por depósito.", 65: "Sua determinação é inspiradora. Continue com essa energia!", 70: "70% e contando! O cheirinho de vitória está no ar.", 75: "Parabéns! 3/4 da meta concluídos. Falta pouco, não desista agora!", 80: "Você está na reta final! Visualize seu objetivo se tornando realidade.", 85: "Quase lá! Cada centavo te deixa mais perto do seu sonho.", 90: "SÓ FALTAM 10%! Você consegue, a linha de chegada está logo ali!", 95: "Está por um fio! O último esforço é o que te levará à glória.", 100: "VOCÊ CONSEGUIU! PARABÉNS! 🎉 Celebre muito! Você realizou sua meta e provou que é capaz de tudo!"
         };
         const ACHIEVEMENTS = {
             'firstDeposit': { name: 'Pé-quente', desc: 'Fazer o primeiro depósito.', icon: '🏆' },
-            'depositStreak7': { name: 'Em Chamas!', desc: 'Fazer depósitos por 7 dias seguidos.', icon: '🔥' },
-            'depositStreak30': { name: 'Foco Total', desc: 'Fazer depósitos por 30 dias seguidos.', icon: '🏅' },
-            'goalCompleted': { name: 'Rei/Rainha da Economia', desc: 'Completar a primeira meta.', icon: '👑' },
+            'first10': { name: 'De grão em grão...', desc: 'Fazer 10 depósitos.', icon: '🌱'},
+            'deposit50': { name: 'Mão de Vaca', desc: 'Fazer um total de 50 depósitos.', icon: '🐮' },
+            'deposit100': { name: 'Maratonista', desc: 'Fazer um total de 100 depósitos.', icon: '🏃‍♀️' },
             'save100': { name: 'Economista', desc: 'Acumular R$ 100 pela primeira vez.', icon: '💰' },
             'save500': { name: 'Investidor', desc: 'Acumular R$ 500 pela primeira vez.', icon: '💎' },
-            'save1000': { name: 'Magnata', desc: 'Acumular R$ 1000 pela primeira vez.', icon: '🏦' },
-            'deposit50': { name: 'Mão de Vaca', desc: 'Fazer um total de 50 depósitos.', icon: '🐮' },
-            'deposit100': { name: 'Formiguinha', desc: 'Fazer um total de 100 depósitos.', icon: '🐜' },
+            'save1000': { name: 'Mestre Poupador', desc: 'Acumular R$ 1.000 pela primeira vez.', icon: '🧙' },
+            'depositStreak7': { name: 'Em Chamas!', desc: 'Fazer depósitos por 7 dias seguidos.', icon: '🔥' },
+            'goalCompleted': { name: 'Rei/Rainha da Economia', desc: 'Completar a primeira meta.', icon: '👑' },
+            'bigGoal': { name: 'Visionário', desc: 'Criar uma meta de mais de R$ 2.000.', icon: '🔭' },
             'allThemes': { name: 'Colecionador de Cores', desc: 'Experimentar todos os temas de cores.', icon: '🎨' },
-            'first10': { name: 'De grão em grão...', desc: 'Fazer 10 depósitos.', icon: '🌱'}
+            'newBeginning': { name: 'Recomeço', desc: 'Criar uma nova meta após completar uma.', icon: '🌅' }
         };
 
         // --- ELEMENTOS DO DOM ---
         const loadingScreen = document.getElementById('loading-screen'), loadingText = document.getElementById('loading-text');
         const loginScreen = document.getElementById('login-screen'), emailInput = document.getElementById('email-input'), passwordInput = document.getElementById('password-input'), loginBtn = document.getElementById('login-btn'), loginError = document.getElementById('login-error');
-        const setupScreen = document.getElementById('setup-screen'), appScreen = document.getElementById('app-screen');
-        const ownerNameInput = document.getElementById('owner-name-input'), goalNameInput = document.getElementById('goal-name-input'), parcelsContainer = document.getElementById('parcels-container'), addParcelBtn = document.getElementById('add-parcel-btn'), calculatedTotalEl = document.getElementById('calculated-total'), startChallengeBtn = document.getElementById('start-challenge-btn');
+        const setupScreen = document.getElementById('setup-screen'), setupTitle = document.getElementById('setup-title'), appScreen = document.getElementById('app-screen');
+        const ownerNameInput = document.getElementById('owner-name-input'), goalNameInput = document.getElementById('goal-name-input'), parcelsContainer = document.getElementById('parcels-container'), addParcelBtn = document.getElementById('add-parcel-btn'), calculatedTotalEl = document.getElementById('calculated-total'), startChallengeBtn = document.getElementById('start-challenge-btn'), logoutBtnSetup = document.getElementById('logout-btn-setup');
         const goalTitle = document.getElementById('goal-title'), goalOwner = document.getElementById('goal-owner'), totalSavedEl = document.getElementById('total-saved'), progressBar = document.getElementById('progress-bar'), progressText = document.getElementById('progress-text'), depositsGrid = document.getElementById('deposits-grid');
         const resetButton = document.getElementById('reset-button'), newGoalButton = document.getElementById('new-goal-button'), logoutBtn = document.getElementById('logout-btn'), reportsBtn = document.getElementById('reports-btn'), achievementsBtn = document.getElementById('achievements-btn');
         const modal = document.getElementById('confirmation-modal'), modalTitle = document.getElementById('modal-title'), modalText = document.getElementById('modal-text'), confirmBtn = document.getElementById('confirm-btn'), cancelBtn = document.getElementById('cancel-btn');
@@ -360,7 +296,7 @@
         const unlockedModal = document.getElementById('achievement-unlocked-modal'), unlockedIcon = document.getElementById('unlocked-achievement-icon'), unlockedName = document.getElementById('unlocked-achievement-name'), unlockedDesc = document.getElementById('unlocked-achievement-desc'), unlockedCloseBtn = document.getElementById('unlocked-achievement-close-btn');
         const themeSelectors = [document.getElementById('theme-selector-setup'), document.getElementById('theme-selector-app')];
 
-        let currentGoal = null, confirmAction = null, audioReady = false, userId = null;
+        let userData = null, confirmAction = null, audioReady = false, userId = null;
         let pieChart = null, lineChart = null;
 
         // --- CONFIGURAÇÃO DE ÁUDIO (Tone.js) ---
@@ -379,37 +315,26 @@
         
         // --- FUNÇÃO AUXILIAR ---
         function calculateTotalSaved() {
-            if (!currentGoal || !Array.isArray(currentGoal.markedIndices)) return 0;
-            return currentGoal.markedIndices.reduce((sum, i) => {
-                const itemEl = depositsGrid.querySelector(`[data-index='${i}']`);
-                return itemEl ? sum + parseFloat(itemEl.dataset.value) : sum;
-            }, 0);
+            if (!userData || !Array.isArray(userData.markedIndices) || !Array.isArray(userData.deposits)) return 0;
+            return userData.markedIndices.reduce((sum, i) => sum + parseFloat(userData.deposits[i] || 0), 0);
         }
 
         // --- FUNÇÕES DE TEMA ---
         function applyTheme(themeKey) {
             document.body.dataset.theme = themeKey;
+            document.body.classList.remove('login-theme');
             themeSelectors.forEach(s => s.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.theme === themeKey)));
         }
         async function saveAndApplyTheme(themeKey) {
             applyTheme(themeKey);
             if (userId) {
-                if (currentGoal) {
-                    currentGoal.theme = themeKey;
-                    if (!currentGoal.themesUsed) currentGoal.themesUsed = [];
-                    if (!currentGoal.themesUsed.includes(themeKey)) {
-                        currentGoal.themesUsed.push(themeKey);
-                    }
-                    await saveGoal();
-                    await checkAllAchievements();
-                } else {
-                     try {
-                        const goalRef = doc(db, "goals", userId);
-                        await setDoc(goalRef, { theme: themeKey }, { merge: true });
-                    } catch (error) {
-                        console.error("Erro ao salvar preferência de tema:", error);
-                    }
+                userData.theme = themeKey;
+                if (!userData.themesUsed) userData.themesUsed = [];
+                if (!userData.themesUsed.includes(themeKey)) {
+                    userData.themesUsed.push(themeKey);
                 }
+                await saveUserData();
+                await checkAllAchievements();
             }
         }
         function renderThemeSelectors() {
@@ -425,30 +350,16 @@
         }
 
         // --- FUNÇÕES DE DADOS (FIRESTORE) ---
-        async function saveGoal() {
-            if (!userId || !currentGoal) return;
-            try {
-                const goalRef = doc(db, "goals", userId);
-                await setDoc(goalRef, currentGoal);
-            } catch (error) {
-                console.error("Erro ao salvar dados:", error);
-            }
+        async function saveUserData() {
+            if (!userId || !userData) return;
+            await setDoc(doc(db, "users", userId), userData);
         }
-        async function loadGoal() {
+        async function loadUserData() {
             if (!userId) return;
-            const goalRef = doc(db, "goals", userId);
-            const docSnap = await getDoc(goalRef);
-            currentGoal = docSnap.exists() ? docSnap.data() : null;
+            const docSnap = await getDoc(doc(db, "users", userId));
+            userData = docSnap.exists() ? docSnap.data() : { unlockedAchievements: [], themesUsed: [] };
         }
-        async function deleteGoal() {
-            if (!userId) return;
-            try {
-                await deleteDoc(doc(db, "goals", userId));
-            } catch (error) {
-                console.error("Erro ao deletar meta:", error);
-            }
-        }
-
+        
         // --- FUNÇÕES DE CONFIGURAÇÃO (SETUP) ---
         function addParcelRow() {
             const parcelDiv = document.createElement('div');
@@ -479,26 +390,42 @@
                 if (quantity > 0 && value > 0) { for (let i = 0; i < quantity; i++) deposits.push(value); total += quantity * value; }
             });
             if (deposits.length === 0) { alert('Por favor, adicione pelo menos um tipo de depósito válido.'); return; }
-            const selectedTheme = document.body.dataset.theme || 'neon-pink';
-            currentGoal = { owner: ownerName, name: goalName, total: total, deposits: deposits, markedIndices: [], lastMilestoneAchieved: 0, theme: selectedTheme, depositHistory: [], unlockedAchievements: [], depositStreak: { current: 0, lastDepositDate: null }, themesUsed: [selectedTheme] };
+            
+            if (userData.unlockedAchievements.includes('goalCompleted')) {
+                await unlockAchievement('newBeginning');
+            }
+
+            userData = {
+                ...userData,
+                ownerName: ownerName,
+                name: goalName,
+                total: total,
+                deposits: deposits,
+                markedIndices: [],
+                lastMilestoneAchieved: 0,
+                depositHistory: [],
+                depositStreak: { current: 0, lastDepositDate: null }
+            };
+            
+            if (total > 2000) {
+                await unlockAchievement('bigGoal');
+            }
+
             loadingScreen.classList.remove('hidden');
-            await saveGoal();
+            await saveUserData();
             await initializeAppUI();
         }
         
         // --- FUNÇÕES DOS GRÁFICOS ---
         function prepareChartData() {
             const depositCounts = {};
-            currentGoal.markedIndices.forEach(index => {
-                const itemEl = depositsGrid.querySelector(`[data-index='${index}']`);
-                if (itemEl) {
-                    const value = parseFloat(itemEl.dataset.value);
-                    depositCounts[value] = (depositCounts[value] || 0) + 1;
-                }
+            userData.markedIndices.forEach(index => {
+                const value = userData.deposits[index];
+                depositCounts[value] = (depositCounts[value] || 0) + 1;
             });
             const pieLabels = Object.keys(depositCounts).map(v => `R$ ${v}`);
             const pieData = Object.values(depositCounts);
-            const history = (currentGoal.depositHistory || []).sort((a, b) => a.timestamp - b.timestamp);
+            const history = (userData.depositHistory || []).sort((a, b) => a.timestamp - b.timestamp);
             let cumulativeAmount = 0;
             const lineData = history.reduce((acc, record) => {
                 cumulativeAmount += record.amount;
@@ -546,17 +473,17 @@
             playSound('achievement');
         }
         async function unlockAchievement(achievementId) {
-            if (currentGoal && currentGoal.unlockedAchievements && !currentGoal.unlockedAchievements.includes(achievementId)) {
-                currentGoal.unlockedAchievements.push(achievementId);
-                await saveGoal();
+            if (userData && userData.unlockedAchievements && !userData.unlockedAchievements.includes(achievementId)) {
+                userData.unlockedAchievements.push(achievementId);
+                await saveUserData();
                 showAchievementUnlockedModal(achievementId);
             }
         }
         async function checkAllAchievements() {
-            if (!currentGoal) return;
+            if (!userData || !userData.deposits) return;
             const totalSaved = calculateTotalSaved();
-            const totalDeposits = (currentGoal.depositHistory || []).length;
-
+            const totalDeposits = (userData.depositHistory || []).length;
+            
             if (totalDeposits > 0) await unlockAchievement('firstDeposit');
             if (totalDeposits >= 10) await unlockAchievement('first10');
             if (totalDeposits >= 50) await unlockAchievement('deposit50');
@@ -564,35 +491,14 @@
             if (totalSaved >= 100) await unlockAchievement('save100');
             if (totalSaved >= 500) await unlockAchievement('save500');
             if (totalSaved >= 1000) await unlockAchievement('save1000');
-            if (totalSaved >= currentGoal.total) await unlockAchievement('goalCompleted');
-            if ((currentGoal.themesUsed || []).length >= 4) await unlockAchievement('allThemes');
-            
-            // Streak check
-            const today = new Date().setHours(0, 0, 0, 0);
-            const lastDepositDate = currentGoal.depositStreak.lastDepositDate || 0;
-            const oneDay = 24 * 60 * 60 * 1000;
-
-            if (today !== lastDepositDate) {
-                if (today - lastDepositDate === oneDay) {
-                    currentGoal.depositStreak.current++;
-                } else {
-                    currentGoal.depositStreak.current = 1;
-                }
-                currentGoal.depositStreak.lastDepositDate = today;
-                if (currentGoal.depositStreak.current >= 7) {
-                    await unlockAchievement('depositStreak7');
-                }
-                if (currentGoal.depositStreak.current >= 30) {
-                    await unlockAchievement('depositStreak30');
-                }
-                await saveGoal();
-            }
+            if (totalSaved >= userData.total) await unlockAchievement('goalCompleted');
+            if ((userData.themesUsed || []).length >= Object.keys(THEMES).length) await unlockAchievement('allThemes');
         }
         function renderAchievements() {
             achievementsGrid.innerHTML = '';
             for (const id in ACHIEVEMENTS) {
                 const achievement = ACHIEVEMENTS[id];
-                const isUnlocked = currentGoal.unlockedAchievements.includes(id);
+                const isUnlocked = userData.unlockedAchievements.includes(id);
                 const item = document.createElement('div');
                 item.className = `achievement-item neon-box p-4 rounded-lg flex flex-col items-center justify-center ${isUnlocked ? '' : 'locked'}`;
                 item.innerHTML = `
@@ -607,71 +513,73 @@
         // --- FUNÇÕES PRINCIPAIS DO APP ---
         function renderGrid() {
             depositsGrid.innerHTML = '';
-            const deposits = Array.isArray(currentGoal.deposits) ? currentGoal.deposits : [];
-            const shuffledDeposits = [...deposits].sort(() => Math.random() - 0.5);
-            shuffledDeposits.forEach((value, index) => {
+            const deposits = Array.isArray(userData.deposits) ? userData.deposits : [];
+            const itemsToRender = deposits.map((value, index) => ({ value, originalIndex: index }))
+                                          .sort((a, b) => a.value - b.value);
+
+            itemsToRender.forEach(({ value, originalIndex }) => {
                 const item = document.createElement('button');
                 item.className = 'deposit-item h-12 w-full rounded-lg font-bold text-lg flex items-center justify-center';
-                item.dataset.index = index; item.dataset.value = value;
+                item.dataset.originalIndex = originalIndex;
+                item.dataset.value = value;
                 const valueSpan = document.createElement('span'); valueSpan.textContent = value.toLocaleString('pt-BR');
                 const flowerIcon = document.createElement('span'); flowerIcon.className = 'flower-icon';
                 flowerIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>`;
                 item.appendChild(valueSpan); item.appendChild(flowerIcon);
-                item.addEventListener('click', () => toggleMark(index));
+                item.addEventListener('click', () => toggleMark(originalIndex));
                 depositsGrid.appendChild(item);
             });
         }
-        async function toggleMark(index) {
-            const alreadyMarked = currentGoal.markedIndices.includes(index);
-            const itemEl = depositsGrid.querySelector(`[data-index='${index}']`);
-            if (!itemEl) return;
-            const value = parseFloat(itemEl.dataset.value);
+        async function toggleMark(originalIndex) {
+            const alreadyMarked = userData.markedIndices.includes(originalIndex);
+            const value = parseFloat(userData.deposits[originalIndex]);
+            if (isNaN(value)) { console.error(`Invalid deposit value at index ${originalIndex}`); return; }
             
-            if (!currentGoal.depositHistory) currentGoal.depositHistory = [];
-            if (!currentGoal.depositStreak) currentGoal.depositStreak = { current: 0, lastDepositDate: null };
+            if (!userData.depositHistory) userData.depositHistory = [];
+            if (!userData.depositStreak) userData.depositStreak = { current: 0, lastDepositDate: null };
 
             if (alreadyMarked) {
-                currentGoal.markedIndices = currentGoal.markedIndices.filter(i => i !== index);
-                const historyIndex = currentGoal.depositHistory.findLastIndex(h => h.amount === value);
-                if(historyIndex > -1) currentGoal.depositHistory.splice(historyIndex, 1);
+                userData.markedIndices = userData.markedIndices.filter(i => i !== originalIndex);
+                const historyIndex = userData.depositHistory.findLastIndex(h => h.amount === value);
+                if(historyIndex > -1) userData.depositHistory.splice(historyIndex, 1);
                 playSound('unmark');
             } else {
-                currentGoal.markedIndices.push(index);
-                currentGoal.depositHistory.push({ amount: value, timestamp: Date.now() });
+                userData.markedIndices.push(originalIndex);
+                userData.depositHistory.push({ amount: value, timestamp: Date.now() });
                 playSound('mark');
                 await checkAllAchievements();
                 await checkMilestone();
             }
-            await saveGoal();
+            await saveUserData();
             updateUI();
         }
         async function checkMilestone() {
             const totalSaved = calculateTotalSaved();
-            const progressPercentage = currentGoal.total > 0 ? (totalSaved / currentGoal.total) * 100 : 0;
-            const lastMilestone = currentGoal.lastMilestoneAchieved || 0;
+            const progressPercentage = userData.total > 0 ? (totalSaved / userData.total) * 100 : 0;
+            const lastMilestone = userData.lastMilestoneAchieved || 0;
             let nextMilestone = 0;
             for (let m = 5; m <= 100; m += 5) {
                 if (progressPercentage >= m && m > lastMilestone) { nextMilestone = m; }
             }
             if (nextMilestone > lastMilestone) {
-                currentGoal.lastMilestoneAchieved = nextMilestone;
+                userData.lastMilestoneAchieved = nextMilestone;
                 showMotivationModal(`🎉 ${nextMilestone}% Alcançado! 🎉`, MOTIVATIONAL_MESSAGES[nextMilestone]);
                 playSound('milestone');
-                await saveGoal();
+                await saveUserData();
             }
         }
         function updateUI() {
-            goalTitle.textContent = currentGoal.name;
-            goalOwner.textContent = `de ${currentGoal.owner || 'Proprietário'}`;
+            goalTitle.textContent = userData.name;
+            goalOwner.textContent = `de ${userData.ownerName || 'Proprietário'}`;
             document.querySelectorAll('.deposit-item').forEach(item => {
-                const index = parseInt(item.dataset.index);
-                item.classList.toggle('marked', currentGoal.markedIndices.includes(index));
+                const originalIndex = parseInt(item.dataset.originalIndex);
+                item.classList.toggle('marked', userData.markedIndices.includes(originalIndex));
             });
             const totalSaved = calculateTotalSaved();
-            const progressPercentage = currentGoal.total > 0 ? (totalSaved / currentGoal.total) * 100 : 0;
+            const progressPercentage = userData.total > 0 ? (totalSaved / userData.total) * 100 : 0;
             totalSavedEl.textContent = `R$ ${totalSaved.toFixed(2).replace('.', ',')}`;
             progressBar.style.width = `${progressPercentage}%`;
-            const goalTotalFormatted = currentGoal.total.toFixed(2).replace('.', ',');
+            const goalTotalFormatted = userData.total.toFixed(2).replace('.', ',');
             progressText.textContent = `${Math.floor(progressPercentage)}% completo - Rumo aos R$ ${goalTotalFormatted}!`;
             if (progressPercentage >= 100) {
                 progressText.textContent = `Parabéns! Você alcançou sua meta de R$ ${goalTotalFormatted}!`;
@@ -683,15 +591,26 @@
 
         // --- FUNÇÕES DE ESTADO ---
         async function resetProgress() { 
-            currentGoal.markedIndices = []; 
-            currentGoal.lastMilestoneAchieved = 0; 
-            currentGoal.depositHistory = [];
-            currentGoal.depositStreak = { current: 0, lastDepositDate: null };
-            await saveGoal(); updateUI(); hideModal(); 
+            userData.markedIndices = []; 
+            userData.lastMilestoneAchieved = 0; 
+            userData.depositHistory = [];
+            userData.depositStreak = { current: 0, lastDepositDate: null };
+            await saveUserData(); 
+            updateUI(); 
+            hideModal(); 
         }
         async function createNewGoal() { 
-            await deleteGoal(); currentGoal = null; 
-            hideModal(); await initializeAppUI(); 
+            const profileData = {
+                ownerName: userData.ownerName,
+                theme: userData.theme,
+                unlockedAchievements: userData.unlockedAchievements,
+                themesUsed: userData.themesUsed,
+                depositStreak: userData.depositStreak
+            };
+            userData = profileData;
+            await saveUserData();
+            hideModal(); 
+            await initializeAppUI();
         }
 
         // --- FUNÇÕES DO MODAL ---
@@ -699,7 +618,7 @@
             if (type === 'reset') {
                 modalTitle.textContent = 'Reiniciar Progresso?'; modalText.textContent = 'Tem certeza? Todo o progresso desta meta será perdido.'; confirmAction = resetProgress;
             } else if (type === 'new') {
-                modalTitle.textContent = 'Criar Nova Meta?'; modalText.textContent = 'Isso irá apagar a meta atual e todo o seu progresso. Deseja continuar?'; confirmAction = createNewGoal;
+                modalTitle.textContent = 'Apagar e Criar Nova?'; modalText.textContent = 'Isso irá apagar a meta atual e todo o seu progresso. Deseja continuar?'; confirmAction = createNewGoal;
             }
             modal.classList.remove('hidden');
         }
@@ -730,27 +649,27 @@
                 loadingText.textContent = 'Carregando seu cofre...';
                 loadingScreen.classList.remove('hidden');
                 renderThemeSelectors();
-                await loadGoal();
+                await loadUserData();
                 
-                if (currentGoal && Array.isArray(currentGoal.deposits)) {
-                    if (!currentGoal.unlockedAchievements) currentGoal.unlockedAchievements = [];
-                    if (!currentGoal.depositStreak) currentGoal.depositStreak = { current: 0, lastDepositDate: null };
-                    if (!currentGoal.themesUsed) currentGoal.themesUsed = [];
+                if (userData && Array.isArray(userData.deposits)) {
+                    if (!userData.unlockedAchievements) userData.unlockedAchievements = [];
+                    if (!userData.depositStreak) userData.depositStreak = { current: 0, lastDepositDate: null };
+                    if (!userData.themesUsed) userData.themesUsed = [];
 
-                    applyTheme(currentGoal.theme || 'neon-pink');
+                    applyTheme(userData.theme || 'all-black');
                     appScreen.classList.remove('hidden');
                     setupScreen.classList.add('hidden');
                     loginScreen.classList.add('hidden');
                     renderGrid(); 
                     updateUI();
                 } else {
-                    const savedTheme = currentGoal ? currentGoal.theme : 'neon-pink';
+                    const savedTheme = userData ? userData.theme : 'all-black';
                     applyTheme(savedTheme);
                     setupScreen.classList.remove('hidden');
                     appScreen.classList.add('hidden');
                     loginScreen.classList.add('hidden');
                     parcelsContainer.innerHTML = ''; addParcelRow();
-                    ownerNameInput.value = '';
+                    ownerNameInput.value = userData.ownerName || '';
                     goalNameInput.value = ''; updateCalculatedTotal();
                 }
             } catch (error) {
@@ -763,6 +682,7 @@
         
         // --- EVENT LISTENERS ---
         function setupEventListeners() {
+            document.body.addEventListener('click', initAudio, { once: true });
             addParcelBtn.addEventListener('click', addParcelRow);
             startChallengeBtn.addEventListener('click', startNewChallenge);
             reportsBtn.addEventListener('click', showReportsModal);
@@ -796,8 +716,9 @@
                 }
             });
 
-            logoutBtn.addEventListener('click', async () => {
-                await signOut(auth);
+            const logoutButtons = [logoutBtn, logoutBtnSetup];
+            logoutButtons.forEach(btn => {
+                if (btn) btn.addEventListener('click', async () => await signOut(auth));
             });
         }
 
@@ -809,7 +730,9 @@
                 await initializeAppUI();
             } else {
                 userId = null;
-                currentGoal = null;
+                userData = null;
+                document.body.classList.add('login-theme');
+                document.body.removeAttribute('data-theme');
                 loginScreen.classList.remove('hidden');
                 appScreen.classList.add('hidden');
                 setupScreen.classList.add('hidden');
@@ -818,4 +741,5 @@
         });
     </script>
 </body>
+
 </html>
