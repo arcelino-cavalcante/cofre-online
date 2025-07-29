@@ -372,7 +372,15 @@
             else if (type === 'achievement') achievementSynth.triggerAttackRelease(["C4", "G4", "C5", "E5"], "8n", Tone.now());
         }
         function initAudio() { if (!audioReady) { Tone.start(); audioReady = true; } }
-        document.body.addEventListener('click', initAudio, { once: true });
+        
+        // --- FUNÇÃO AUXILIAR ---
+        function calculateTotalSaved() {
+            if (!currentGoal || !Array.isArray(currentGoal.markedIndices)) return 0;
+            return currentGoal.markedIndices.reduce((sum, i) => {
+                const itemEl = depositsGrid.querySelector(`[data-index='${i}']`);
+                return itemEl ? sum + parseFloat(itemEl.dataset.value) : sum;
+            }, 0);
+        }
 
         // --- FUNÇÕES DE TEMA ---
         function applyTheme(themeKey) {
@@ -478,8 +486,11 @@
         function prepareChartData() {
             const depositCounts = {};
             currentGoal.markedIndices.forEach(index => {
-                const value = currentGoal.deposits[index];
-                depositCounts[value] = (depositCounts[value] || 0) + 1;
+                const itemEl = depositsGrid.querySelector(`[data-index='${index}']`);
+                if (itemEl) {
+                    const value = parseFloat(itemEl.dataset.value);
+                    depositCounts[value] = (depositCounts[value] || 0) + 1;
+                }
             });
             const pieLabels = Object.keys(depositCounts).map(v => `R$ ${v}`);
             const pieData = Object.values(depositCounts);
@@ -539,7 +550,7 @@
         }
         async function checkAllAchievements() {
             if (!currentGoal) return;
-            const totalSaved = currentGoal.markedIndices.reduce((sum, i) => sum + parseFloat(currentGoal.deposits[i]), 0);
+            const totalSaved = calculateTotalSaved();
             const totalDeposits = (currentGoal.depositHistory || []).length;
 
             if (totalDeposits > 0) await unlockAchievement('firstDeposit');
@@ -603,7 +614,10 @@
         }
         async function toggleMark(index) {
             const alreadyMarked = currentGoal.markedIndices.includes(index);
-            const value = parseFloat(currentGoal.deposits[index]);
+            const itemEl = depositsGrid.querySelector(`[data-index='${index}']`);
+            if (!itemEl) return;
+            const value = parseFloat(itemEl.dataset.value);
+            
             if (!currentGoal.depositHistory) currentGoal.depositHistory = [];
             if (!currentGoal.depositStreak) currentGoal.depositStreak = { current: 0, lastDepositDate: null };
 
@@ -623,7 +637,7 @@
             updateUI();
         }
         async function checkMilestone() {
-            const totalSaved = currentGoal.markedIndices.reduce((sum, i) => sum + parseFloat(currentGoal.deposits[i]), 0);
+            const totalSaved = calculateTotalSaved();
             const progressPercentage = currentGoal.total > 0 ? (totalSaved / currentGoal.total) * 100 : 0;
             const lastMilestone = currentGoal.lastMilestoneAchieved || 0;
             let nextMilestone = 0;
@@ -644,7 +658,7 @@
                 const index = parseInt(item.dataset.index);
                 item.classList.toggle('marked', currentGoal.markedIndices.includes(index));
             });
-            const totalSaved = currentGoal.markedIndices.reduce((sum, i) => sum + parseFloat(currentGoal.deposits[i]), 0);
+            const totalSaved = calculateTotalSaved();
             const progressPercentage = currentGoal.total > 0 ? (totalSaved / currentGoal.total) * 100 : 0;
             totalSavedEl.textContent = `R$ ${totalSaved.toFixed(2).replace('.', ',')}`;
             progressBar.style.width = `${progressPercentage}%`;
@@ -739,44 +753,47 @@
         }
         
         // --- EVENT LISTENERS ---
-        addParcelBtn.addEventListener('click', addParcelRow);
-        startChallengeBtn.addEventListener('click', startNewChallenge);
-        reportsBtn.addEventListener('click', showReportsModal);
-        reportsCloseBtn.addEventListener('click', hideReportsModal);
-        achievementsBtn.addEventListener('click', showAchievementsModal);
-        achievementsCloseBtn.addEventListener('click', hideAchievementsModal);
-        unlockedCloseBtn.addEventListener('click', hideUnlockedAchievementModal);
-        resetButton.addEventListener('click', () => showModal('reset'));
-        newGoalButton.addEventListener('click', () => showModal('new'));
-        confirmBtn.addEventListener('click', async () => { if (typeof confirmAction === 'function') await confirmAction(); });
-        cancelBtn.addEventListener('click', hideModal);
-        modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
-        motivationCloseBtn.addEventListener('click', hideMotivationModal);
-        motivationModal.addEventListener('click', (e) => { if (e.target === motivationModal) hideMotivationModal(); });
+        function setupEventListeners() {
+            addParcelBtn.addEventListener('click', addParcelRow);
+            startChallengeBtn.addEventListener('click', startNewChallenge);
+            reportsBtn.addEventListener('click', showReportsModal);
+            reportsCloseBtn.addEventListener('click', hideReportsModal);
+            achievementsBtn.addEventListener('click', showAchievementsModal);
+            achievementsCloseBtn.addEventListener('click', hideAchievementsModal);
+            unlockedCloseBtn.addEventListener('click', hideUnlockedAchievementModal);
+            resetButton.addEventListener('click', () => showModal('reset'));
+            newGoalButton.addEventListener('click', () => showModal('new'));
+            confirmBtn.addEventListener('click', async () => { if (typeof confirmAction === 'function') await confirmAction(); });
+            cancelBtn.addEventListener('click', hideModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+            motivationCloseBtn.addEventListener('click', hideMotivationModal);
+            motivationModal.addEventListener('click', (e) => { if (e.target === motivationModal) hideMotivationModal(); });
 
-        loginBtn.addEventListener('click', async () => {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            loginError.textContent = '';
-            if (!email || !password) {
-                loginError.textContent = 'Por favor, preencha e-mail e senha.';
-                return;
-            }
-            loadingText.textContent = 'Entrando...';
-            loadingScreen.classList.remove('hidden');
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                loginError.textContent = 'E-mail ou senha inválidos.';
-                loadingScreen.classList.add('hidden');
-            }
-        });
+            loginBtn.addEventListener('click', async () => {
+                const email = emailInput.value;
+                const password = passwordInput.value;
+                loginError.textContent = '';
+                if (!email || !password) {
+                    loginError.textContent = 'Por favor, preencha e-mail e senha.';
+                    return;
+                }
+                loadingText.textContent = 'Entrando...';
+                loadingScreen.classList.remove('hidden');
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } catch (error) {
+                    loginError.textContent = 'E-mail ou senha inválidos.';
+                    loadingScreen.classList.add('hidden');
+                }
+            });
 
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-        });
+            logoutBtn.addEventListener('click', async () => {
+                await signOut(auth);
+            });
+        }
 
         // --- PONTO DE ENTRADA PRINCIPAL ---
+        setupEventListeners();
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 userId = user.uid;
