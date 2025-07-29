@@ -6,6 +6,7 @@
     <title>Minhaeria - Suas Metas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
@@ -152,6 +153,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .achievement-item {
+            transition: all 0.3s ease;
+        }
+        .achievement-item.locked {
+            filter: grayscale(1);
+            opacity: 0.6;
+        }
+        .achievement-item.locked .text-4xl {
+            filter: blur(2px);
+        }
     </style>
 </head>
 <body class="p-4 sm:p-6 md:p-8">
@@ -228,7 +239,9 @@
         </section>
         <main id="deposits-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3"></main>
         <footer class="text-center mt-8">
-            <div class="mb-6 flex justify-center items-center gap-4">
+            <div class="mb-6 flex flex-wrap justify-center items-center gap-4">
+                <button id="achievements-btn" class="neon-button font-bold py-2 px-6 rounded-lg">🏆 Conquistas</button>
+                <button id="reports-btn" class="neon-button font-bold py-2 px-6 rounded-lg">Ver Gráficos</button>
                 <button id="reset-button" class="neon-button font-bold py-2 px-6 rounded-lg">Reiniciar Progresso</button>
                 <button id="new-goal-button" class="neon-button font-bold py-2 px-6 rounded-lg">Criar Nova Meta</button>
                 <button id="logout-btn" class="bg-red-500/50 border border-red-500 text-red-300 font-bold py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white">Sair</button>
@@ -255,6 +268,40 @@
             <button id="motivation-close-btn" class="neon-button font-bold py-2 px-6 rounded-lg">Continuar!</button>
         </div>
     </div>
+    <div id="reports-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-3xl w-full text-center">
+            <h3 class="text-2xl font-bold neon-text mb-6">Relatórios de Progresso</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold text-accent mb-4">Depósitos por Valor</h4>
+                    <canvas id="pie-chart"></canvas>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-accent mb-4">Evolução do Saldo</h4>
+                    <canvas id="line-chart"></canvas>
+                </div>
+            </div>
+            <button id="reports-close-btn" class="neon-button font-bold py-2 px-6 rounded-lg mt-8">Fechar</button>
+        </div>
+    </div>
+    <div id="achievements-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-4xl w-full text-center">
+            <h3 class="text-2xl font-bold neon-text mb-6">🏆 Quadro de Conquistas</h3>
+            <div id="achievements-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto p-2">
+                <!-- Conquistas serão inseridas aqui -->
+            </div>
+            <button id="achievements-close-btn" class="neon-button font-bold py-2 px-6 rounded-lg mt-8">Fechar</button>
+        </div>
+    </div>
+    <div id="achievement-unlocked-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-sm w-full text-center transform transition-transform scale-50 opacity-0">
+            <h3 class="text-2xl font-bold neon-text mb-2">Conquista Desbloqueada!</h3>
+            <p id="unlocked-achievement-icon" class="text-7xl my-4"></p>
+            <h4 id="unlocked-achievement-name" class="text-xl font-bold text-accent"></h4>
+            <p id="unlocked-achievement-desc" class="text-sm text-gray-300 mb-6"></p>
+            <button id="unlocked-achievement-close-btn" class="neon-button font-bold py-2 px-6 rounded-lg">Legal!</button>
+        </div>
+    </div>
 
     <script type="module">
         // Importações do Firebase
@@ -271,43 +318,28 @@
           messagingSenderId: "424084029673",
           appId: "1:424084029673:web:b05a4630d400c96a6bb078"
         };
-
-        // =================================================================================
-        // NOTA IMPORTANTE SOBRE AS REGRAS DE SEGURANÇA DO FIREBASE
-        // =================================================================================
-        // Para que este aplicativo funcione, você PRECISA atualizar as regras de segurança
-        // do seu Firestore no painel do Firebase. 
-        //
-        // 1. Vá para o seu projeto no console do Firebase.
-        // 2. No menu à esquerda, vá em "Build" -> "Firestore Database".
-        // 3. Clique na aba "Regras" (Rules).
-        // 4. Substitua o conteúdo existente por estas regras:
-        //
-        // rules_version = '2';
-        // service cloud.firestore {
-        //   match /databases/{database}/documents {
-        //     match /goals/{userId} {
-        //       allow read, write: if request.auth != null && request.auth.uid == userId;
-        //     }
-        //   }
-        // }
-        //
-        // 5. Clique em "Publicar". 
-        // =================================================================================
-
+        
         // Inicialização do Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- DEFINIÇÃO DOS TEMAS ---
+        // --- DEFINIÇÕES DE JOGO ---
         const THEMES = {
             'neon-pink': { name: 'Rosa Neon', color: '#f871b5' }, 'galaxy': { name: 'Azul Galáxia', color: '#22d3ee' }, 'nature': { name: 'Verde Natureza', color: '#34d399' }, 'magic': { name: 'Roxo Mágico', color: '#c084fc' }
         };
-        
-        // --- MENSAGENS DE MOTIVAÇÃO ---
         const MOTIVATIONAL_MESSAGES = {
             5: "É isso aí! O primeiro passo é o mais importante. Continue assim!", 10: "Incrível! Você já alcançou 10% da sua meta. Cada depósito conta!", 15: "Você está pegando o ritmo! Continue focada e verá os resultados.", 20: "Um quinto do caminho já foi! Sua dedicação está fazendo a diferença.", 25: "Parabéns! Você chegou a 1/4 da sua meta. Você é imparável!", 30: "Olha só esse progresso! Você está cada vez mais perto.", 35: "Continue brilhando! Sua disciplina é sua maior aliada.", 40: "Uau! Quase na metade. O resultado final será muito gratificante.", 45: "Falta muito pouco para a metade! Você está mandando muito bem.", 50: "METADE DO CAMINHO! 🎉 Você é incrível! Comemore essa grande conquista.", 55: "A maior parte já foi! Agora é manter o foco na reta final.", 60: "Excelente! Você está construindo seu sonho, depósito por depósito.", 65: "Sua determinação é inspiradora. Continue com essa energia!", 70: "70% e contando! O cheirinho de vitória está no ar.", 75: "Parabéns! 3/4 da meta concluídos. Falta pouco, não desista agora!", 80: "Você está na reta final! Visualize seu objetivo se tornando realidade.", 85: "Quase lá! Cada centavo te deixa mais perto do seu sonho.", 90: "SÓ FALTAM 10%! Você consegue, a linha de chegada está logo ali!", 95: "Está por um fio! O último esforço é o que te levará à glória.", 100: "VOCÊ CONSEGUIU! PARABÉNS! 🎉 Celebre muito! Você realizou sua meta e provou que é capaz de tudo!"
+        };
+        const ACHIEVEMENTS = {
+            'firstDeposit': { name: 'Pé-quente', desc: 'Fazer o primeiro depósito.', icon: '🏆' },
+            'depositStreak7': { name: 'Em Chamas!', desc: 'Fazer depósitos por 7 dias seguidos.', icon: '🔥' },
+            'goalCompleted': { name: 'Rei/Rainha da Economia', desc: 'Completar a primeira meta.', icon: '👑' },
+            'save100': { name: 'Economista', desc: 'Acumular R$ 100 pela primeira vez.', icon: '💰' },
+            'save500': { name: 'Investidor', desc: 'Acumular R$ 500 pela primeira vez.', icon: '💎' },
+            'deposit50': { name: 'Mão de Vaca', desc: 'Fazer um total de 50 depósitos.', icon: '🐮' },
+            'allThemes': { name: 'Colecionador de Cores', desc: 'Experimentar todos os temas de cores.', icon: '🎨' },
+            'first10': { name: 'De grão em grão...', desc: 'Fazer 10 depósitos.', icon: '🌱'}
         };
 
         // --- ELEMENTOS DO DOM ---
@@ -316,22 +348,28 @@
         const setupScreen = document.getElementById('setup-screen'), appScreen = document.getElementById('app-screen');
         const ownerNameInput = document.getElementById('owner-name-input'), goalNameInput = document.getElementById('goal-name-input'), parcelsContainer = document.getElementById('parcels-container'), addParcelBtn = document.getElementById('add-parcel-btn'), calculatedTotalEl = document.getElementById('calculated-total'), startChallengeBtn = document.getElementById('start-challenge-btn');
         const goalTitle = document.getElementById('goal-title'), goalOwner = document.getElementById('goal-owner'), totalSavedEl = document.getElementById('total-saved'), progressBar = document.getElementById('progress-bar'), progressText = document.getElementById('progress-text'), depositsGrid = document.getElementById('deposits-grid');
-        const resetButton = document.getElementById('reset-button'), newGoalButton = document.getElementById('new-goal-button'), logoutBtn = document.getElementById('logout-btn');
+        const resetButton = document.getElementById('reset-button'), newGoalButton = document.getElementById('new-goal-button'), logoutBtn = document.getElementById('logout-btn'), reportsBtn = document.getElementById('reports-btn'), achievementsBtn = document.getElementById('achievements-btn');
         const modal = document.getElementById('confirmation-modal'), modalTitle = document.getElementById('modal-title'), modalText = document.getElementById('modal-text'), confirmBtn = document.getElementById('confirm-btn'), cancelBtn = document.getElementById('cancel-btn');
         const motivationModal = document.getElementById('motivation-modal'), motivationTitle = document.getElementById('motivation-title'), motivationText = document.getElementById('motivation-text'), motivationCloseBtn = document.getElementById('motivation-close-btn');
+        const reportsModal = document.getElementById('reports-modal'), reportsCloseBtn = document.getElementById('reports-close-btn');
+        const achievementsModal = document.getElementById('achievements-modal'), achievementsGrid = document.getElementById('achievements-grid'), achievementsCloseBtn = document.getElementById('achievements-close-btn');
+        const unlockedModal = document.getElementById('achievement-unlocked-modal'), unlockedIcon = document.getElementById('unlocked-achievement-icon'), unlockedName = document.getElementById('unlocked-achievement-name'), unlockedDesc = document.getElementById('unlocked-achievement-desc'), unlockedCloseBtn = document.getElementById('unlocked-achievement-close-btn');
         const themeSelectors = [document.getElementById('theme-selector-setup'), document.getElementById('theme-selector-app')];
 
         let currentGoal = null, confirmAction = null, audioReady = false, userId = null;
+        let pieChart = null, lineChart = null;
 
         // --- CONFIGURAÇÃO DE ÁUDIO (Tone.js) ---
         const markSynth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination();
         const unmarkSynth = new Tone.NoiseSynth({ noise: { type: 'white' }, envelope: { attack: 0.001, decay: 0.1, sustain: 0 } }).toDestination();
         const milestoneSynth = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 } }).toDestination();
+        const achievementSynth = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'fatsawtooth' }, envelope: { attack: 0.01, decay: 0.4, sustain: 0.2, release: 0.4 } }).toDestination();
         function playSound(type) {
             if (!audioReady) return;
             if (type === 'mark') markSynth.triggerAttackRelease("C5", "8n");
             else if (type === 'unmark') unmarkSynth.triggerAttackRelease("0.1");
-            else if (type === 'milestone') milestoneSynth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "8n", Tone.now());
+            else if (type === 'milestone') milestoneSynth.triggerAttackRelease(["C5", "E5", "G5"], "8n", Tone.now());
+            else if (type === 'achievement') achievementSynth.triggerAttackRelease(["C4", "G4", "C5", "E5"], "8n", Tone.now());
         }
         function initAudio() { if (!audioReady) { Tone.start(); audioReady = true; } }
         document.body.addEventListener('click', initAudio, { once: true });
@@ -346,12 +384,19 @@
             if (userId) {
                 if (currentGoal) {
                     currentGoal.theme = themeKey;
-                }
-                try {
-                    const goalRef = doc(db, "goals", userId);
-                    await setDoc(goalRef, { theme: themeKey }, { merge: true });
-                } catch (error) {
-                    console.error("Erro ao salvar preferência de tema:", error);
+                    if (!currentGoal.themesUsed) currentGoal.themesUsed = [];
+                    if (!currentGoal.themesUsed.includes(themeKey)) {
+                        currentGoal.themesUsed.push(themeKey);
+                    }
+                    await saveGoal();
+                    await checkAllAchievements();
+                } else {
+                     try {
+                        const goalRef = doc(db, "goals", userId);
+                        await setDoc(goalRef, { theme: themeKey }, { merge: true });
+                    } catch (error) {
+                        console.error("Erro ao salvar preferência de tema:", error);
+                    }
                 }
             }
         }
@@ -413,14 +458,8 @@
         async function startNewChallenge() {
             const ownerName = ownerNameInput.value.trim();
             const goalName = goalNameInput.value.trim();
-            if (!ownerName) {
-                alert('Por favor, insira o nome do proprietário.');
-                return;
-            }
-            if (!goalName) {
-                alert('Por favor, dê um nome para a sua meta.');
-                return;
-            }
+            if (!ownerName) { alert('Por favor, insira o nome do proprietário.'); return; }
+            if (!goalName) { alert('Por favor, dê um nome para a sua meta.'); return; }
             const deposits = [];
             let total = 0;
             document.querySelectorAll('.parcel-row').forEach(row => {
@@ -429,16 +468,128 @@
             });
             if (deposits.length === 0) { alert('Por favor, adicione pelo menos um tipo de depósito válido.'); return; }
             const selectedTheme = document.body.dataset.theme || 'neon-pink';
-            currentGoal = { owner: ownerName, name: goalName, total: total, deposits: deposits, markedIndices: [], lastMilestoneAchieved: 0, theme: selectedTheme };
+            currentGoal = { owner: ownerName, name: goalName, total: total, deposits: deposits, markedIndices: [], lastMilestoneAchieved: 0, theme: selectedTheme, depositHistory: [], unlockedAchievements: [], depositStreak: { current: 0, lastDepositDate: null }, themesUsed: [selectedTheme] };
             loadingScreen.classList.remove('hidden');
             await saveGoal();
             await initializeAppUI();
+        }
+        
+        // --- FUNÇÕES DOS GRÁFICOS ---
+        function prepareChartData() {
+            const depositCounts = {};
+            currentGoal.markedIndices.forEach(index => {
+                const value = currentGoal.deposits[index];
+                depositCounts[value] = (depositCounts[value] || 0) + 1;
+            });
+            const pieLabels = Object.keys(depositCounts).map(v => `R$ ${v}`);
+            const pieData = Object.values(depositCounts);
+            const history = (currentGoal.depositHistory || []).sort((a, b) => a.timestamp - b.timestamp);
+            let cumulativeAmount = 0;
+            const lineData = history.reduce((acc, record) => {
+                cumulativeAmount += record.amount;
+                const date = new Date(record.timestamp).toLocaleDateString('pt-BR');
+                if (!acc.find(item => item.x === date)) {
+                     acc.push({ x: date, y: cumulativeAmount });
+                } else {
+                    acc[acc.length - 1].y = cumulativeAmount;
+                }
+                return acc;
+            }, []);
+            return { pieLabels, pieData, lineData };
+        }
+        function renderCharts() {
+            const { pieLabels, pieData, lineData } = prepareChartData();
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-neon').trim();
+            const pieCtx = document.getElementById('pie-chart').getContext('2d');
+            if (pieChart) pieChart.destroy();
+            pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: ['#f871b5', '#22d3ee', '#34d399', '#c084fc', '#f97316', '#eab308'], borderColor: 'var(--bg-color)' }] },
+                options: { responsive: true, plugins: { legend: { labels: { color: 'white' } } } }
+            });
+            const lineCtx = document.getElementById('line-chart').getContext('2d');
+            if (lineChart) lineChart.destroy();
+            lineChart = new Chart(lineCtx, {
+                type: 'line',
+                data: { datasets: [{ label: 'Saldo Acumulado', data: lineData, borderColor: accentColor, backgroundColor: accentColor + '33', fill: true, tension: 0.1 }] },
+                options: { responsive: true, scales: { x: { ticks: { color: 'white' }, grid: { color: '#ffffff20' } }, y: { ticks: { color: 'white' }, grid: { color: '#ffffff20' } } }, plugins: { legend: { labels: { color: 'white' } } } }
+            });
+        }
+
+        // --- FUNÇÕES DE CONQUISTAS ---
+        function showAchievementUnlockedModal(achievementId) {
+            const achievement = ACHIEVEMENTS[achievementId];
+            if (!achievement) return;
+            unlockedIcon.textContent = achievement.icon;
+            unlockedName.textContent = achievement.name;
+            unlockedDesc.textContent = achievement.desc;
+            unlockedModal.classList.remove('hidden');
+            setTimeout(() => {
+                unlockedModal.firstElementChild.classList.remove('scale-50', 'opacity-0');
+                unlockedModal.firstElementChild.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            playSound('achievement');
+        }
+        async function unlockAchievement(achievementId) {
+            if (!currentGoal.unlockedAchievements.includes(achievementId)) {
+                currentGoal.unlockedAchievements.push(achievementId);
+                await saveGoal();
+                showAchievementUnlockedModal(achievementId);
+            }
+        }
+        async function checkAllAchievements() {
+            if (!currentGoal) return;
+            const totalSaved = currentGoal.markedIndices.reduce((sum, i) => sum + parseFloat(currentGoal.deposits[i]), 0);
+            const totalDeposits = (currentGoal.depositHistory || []).length;
+
+            if (totalDeposits > 0) await unlockAchievement('firstDeposit');
+            if (totalDeposits >= 10) await unlockAchievement('first10');
+            if (totalDeposits >= 50) await unlockAchievement('deposit50');
+            if (totalSaved >= 100) await unlockAchievement('save100');
+            if (totalSaved >= 500) await unlockAchievement('save500');
+            if (totalSaved >= currentGoal.total) await unlockAchievement('goalCompleted');
+            if ((currentGoal.themesUsed || []).length >= 4) await unlockAchievement('allThemes');
+            
+            // Streak check
+            const today = new Date().setHours(0, 0, 0, 0);
+            const lastDepositDate = currentGoal.depositStreak.lastDepositDate || 0;
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            if (today !== lastDepositDate) {
+                if (today - lastDepositDate === oneDay) {
+                    currentGoal.depositStreak.current++;
+                } else {
+                    currentGoal.depositStreak.current = 1;
+                }
+                currentGoal.depositStreak.lastDepositDate = today;
+                if (currentGoal.depositStreak.current >= 7) {
+                    await unlockAchievement('depositStreak7');
+                }
+                await saveGoal();
+            }
+        }
+        function renderAchievements() {
+            achievementsGrid.innerHTML = '';
+            for (const id in ACHIEVEMENTS) {
+                const achievement = ACHIEVEMENTS[id];
+                const isUnlocked = currentGoal.unlockedAchievements.includes(id);
+                const item = document.createElement('div');
+                item.className = `achievement-item neon-box p-4 rounded-lg flex flex-col items-center justify-center ${isUnlocked ? '' : 'locked'}`;
+                item.innerHTML = `
+                    <p class="text-4xl mb-2">${isUnlocked ? achievement.icon : '❓'}</p>
+                    <h4 class="font-bold text-accent">${achievement.name}</h4>
+                    <p class="text-xs text-gray-300">${achievement.desc}</p>
+                `;
+                achievementsGrid.appendChild(item);
+            }
         }
 
         // --- FUNÇÕES PRINCIPAIS DO APP ---
         function renderGrid() {
             depositsGrid.innerHTML = '';
-            const shuffledDeposits = [...currentGoal.deposits].sort(() => Math.random() - 0.5);
+            // FIX: Check if currentGoal.deposits is iterable before spreading
+            const deposits = Array.isArray(currentGoal.deposits) ? currentGoal.deposits : [];
+            const shuffledDeposits = [...deposits].sort(() => Math.random() - 0.5);
             shuffledDeposits.forEach((value, index) => {
                 const item = document.createElement('button');
                 item.className = 'deposit-item h-12 w-full rounded-lg font-bold text-lg flex items-center justify-center';
@@ -453,12 +604,20 @@
         }
         async function toggleMark(index) {
             const alreadyMarked = currentGoal.markedIndices.includes(index);
+            const value = parseFloat(currentGoal.deposits[index]);
+            if (!currentGoal.depositHistory) currentGoal.depositHistory = [];
+            if (!currentGoal.depositStreak) currentGoal.depositStreak = { current: 0, lastDepositDate: null };
+
             if (alreadyMarked) {
                 currentGoal.markedIndices = currentGoal.markedIndices.filter(i => i !== index);
+                const historyIndex = currentGoal.depositHistory.findLastIndex(h => h.amount === value);
+                if(historyIndex > -1) currentGoal.depositHistory.splice(historyIndex, 1);
                 playSound('unmark');
             } else {
                 currentGoal.markedIndices.push(index);
+                currentGoal.depositHistory.push({ amount: value, timestamp: Date.now() });
                 playSound('mark');
+                await checkAllAchievements();
                 await checkMilestone();
             }
             await saveGoal();
@@ -502,7 +661,10 @@
 
         // --- FUNÇÕES DE ESTADO ---
         async function resetProgress() { 
-            currentGoal.markedIndices = []; currentGoal.lastMilestoneAchieved = 0; 
+            currentGoal.markedIndices = []; 
+            currentGoal.lastMilestoneAchieved = 0; 
+            currentGoal.depositHistory = [];
+            currentGoal.depositStreak = { current: 0, lastDepositDate: null };
             await saveGoal(); updateUI(); hideModal(); 
         }
         async function createNewGoal() { 
@@ -525,6 +687,20 @@
             motivationModal.classList.remove('hidden');
         }
         function hideMotivationModal() { motivationModal.classList.add('hidden'); }
+        function showReportsModal() {
+            renderCharts();
+            reportsModal.classList.remove('hidden');
+        }
+        function hideReportsModal() { reportsModal.classList.add('hidden'); }
+        function showAchievementsModal() {
+            renderAchievements();
+            achievementsModal.classList.remove('hidden');
+        }
+        function hideAchievementsModal() { achievementsModal.classList.add('hidden'); }
+        function hideUnlockedAchievementModal() {
+            unlockedModal.firstElementChild.classList.add('scale-50', 'opacity-0');
+            setTimeout(() => unlockedModal.classList.add('hidden'), 300);
+        }
 
         // --- INICIALIZAÇÃO E LÓGICA DE UI ---
         async function initializeAppUI() {
@@ -533,14 +709,24 @@
                 loadingScreen.classList.remove('hidden');
                 renderThemeSelectors();
                 await loadGoal();
-                if (currentGoal) {
+                
+                // FIX: Check if a valid goal exists (with a 'deposits' array)
+                if (currentGoal && Array.isArray(currentGoal.deposits)) {
+                    // Initialize missing fields for older data structures
+                    if (!currentGoal.unlockedAchievements) currentGoal.unlockedAchievements = [];
+                    if (!currentGoal.depositStreak) currentGoal.depositStreak = { current: 0, lastDepositDate: null };
+                    if (!currentGoal.themesUsed) currentGoal.themesUsed = [];
+
                     applyTheme(currentGoal.theme || 'neon-pink');
                     appScreen.classList.remove('hidden');
                     setupScreen.classList.add('hidden');
                     loginScreen.classList.add('hidden');
-                    renderGrid(); updateUI();
+                    renderGrid(); 
+                    updateUI();
                 } else {
-                    applyTheme('neon-pink');
+                    // No valid goal, show setup screen but preserve theme if it exists
+                    const savedTheme = currentGoal ? currentGoal.theme : 'neon-pink';
+                    applyTheme(savedTheme);
                     setupScreen.classList.remove('hidden');
                     appScreen.classList.add('hidden');
                     loginScreen.classList.add('hidden');
@@ -559,12 +745,16 @@
         // --- EVENT LISTENERS ---
         addParcelBtn.addEventListener('click', addParcelRow);
         startChallengeBtn.addEventListener('click', startNewChallenge);
+        reportsBtn.addEventListener('click', showReportsModal);
+        reportsCloseBtn.addEventListener('click', hideReportsModal);
+        achievementsBtn.addEventListener('click', showAchievementsModal);
+        achievementsCloseBtn.addEventListener('click', hideAchievementsModal);
+        unlockedCloseBtn.addEventListener('click', hideUnlockedAchievementModal);
         resetButton.addEventListener('click', () => showModal('reset'));
         newGoalButton.addEventListener('click', () => showModal('new'));
         confirmBtn.addEventListener('click', async () => { if (typeof confirmAction === 'function') await confirmAction(); });
         cancelBtn.addEventListener('click', hideModal);
         modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
-        motivationCloseBtn.addEventListener('click', hideMotivationModal);
         motivationModal.addEventListener('click', (e) => { if (e.target === motivationModal) hideMotivationModal(); });
 
         loginBtn.addEventListener('click', async () => {
