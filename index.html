@@ -3,54 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhaeria - Alice Vasconcelos</title>
+    <title>Minhaeria - Suas Metas</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos personalizados para o tema neon e fontes */
+        /* Estilos com Variáveis de CSS para Temas */
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --primary-neon: #f871b5;
+            --secondary-neon: #ec4899;
+            --accent-color: #f871b5;
+            --accent-text: #1a1a2e;
+            --accent-bg-light: rgba(236, 72, 153, 0.1);
+            --accent-bg-medium: rgba(236, 72, 153, 0.2);
+        }
+
+        [data-theme="galaxy"] {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --primary-neon: #22d3ee;
+            --secondary-neon: #06b6d4;
+            --accent-color: #06b6d4;
+            --accent-text: #0f172a;
+            --accent-bg-light: rgba(34, 211, 238, 0.1);
+            --accent-bg-medium: rgba(34, 211, 238, 0.2);
+        }
+
+        [data-theme="nature"] {
+            --bg-color: #14211a;
+            --text-color: #d1fae5;
+            --primary-neon: #34d399;
+            --secondary-neon: #10b981;
+            --accent-color: #10b981;
+            --accent-text: #14211a;
+            --accent-bg-light: rgba(52, 211, 153, 0.1);
+            --accent-bg-medium: rgba(52, 211, 153, 0.2);
+        }
+
+        [data-theme="magic"] {
+            --bg-color: #2c1d3d;
+            --text-color: #e9d5ff;
+            --primary-neon: #c084fc;
+            --secondary-neon: #a855f7;
+            --accent-color: #a855f7;
+            --accent-text: #2c1d3d;
+            --accent-bg-light: rgba(192, 132, 252, 0.1);
+            --accent-bg-medium: rgba(192, 132, 252, 0.2);
+        }
+
         body {
             font-family: 'Quicksand', sans-serif;
-            background-color: #1a1a2e; /* Fundo escuro para destacar o neon */
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.5s ease;
         }
-        .font-pacifico {
-            font-family: 'Pacifico', cursive;
-        }
+        .font-pacifico { font-family: 'Pacifico', cursive; }
         .neon-text {
-            color: #f871b5;
+            color: var(--primary-neon);
             text-shadow:
-                0 0 5px #f871b5,
-                0 0 10px #f871b5,
-                0 0 20px #f871b5,
-                0 0 40px #ec4899,
-                0 0 80px #ec4899;
+                0 0 5px var(--primary-neon),
+                0 0 10px var(--primary-neon),
+                0 0 20px var(--secondary-neon),
+                0 0 40px var(--secondary-neon);
         }
         .neon-box {
-            border: 2px solid #f871b5;
-            box-shadow: 0 0 10px #f871b5, 0 0 20px #ec4899 inset;
+            border: 2px solid var(--primary-neon);
+            box-shadow: 0 0 10px var(--primary-neon), 0 0 20px var(--secondary-neon) inset;
             transition: all 0.3s ease-in-out;
         }
+        .neon-button {
+             background-color: var(--accent-bg-medium);
+             border: 1px solid var(--secondary-neon);
+             color: var(--primary-neon);
+             transition: all 0.3s ease;
+        }
+        .neon-button:hover {
+            background-color: var(--secondary-neon);
+            color: var(--accent-text);
+            box-shadow: 0 0 15px var(--primary-neon);
+        }
         .deposit-item {
-            background-color: rgba(236, 72, 153, 0.1);
-            border: 1px solid #ec4899;
+            background-color: var(--accent-bg-light);
+            border: 1px solid var(--secondary-neon);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
         .deposit-item.marked {
-            background-color: #ec4899;
-            color: #1a1a2e;
+            background-color: var(--accent-color);
+            color: var(--accent-text);
             transform: scale(1.05);
-            box-shadow: 0 0 15px #f871b5;
+            box-shadow: 0 0 15px var(--primary-neon);
         }
         .deposit-item.marked .flower-icon {
             opacity: 1;
             transform: scale(1) rotate(360deg);
         }
         .progress-bar-inner {
-            background: linear-gradient(90deg, #f871b5, #ec4899);
-            box-shadow: 0 0 5px #f871b5, 0 0 10px #ec4899;
+            background: linear-gradient(90deg, var(--primary-neon), var(--secondary-neon));
+            box-shadow: 0 0 5px var(--primary-neon), 0 0 10px var(--secondary-neon);
             transition: width 0.5s ease-in-out;
         }
         .flower-icon {
@@ -62,221 +117,492 @@
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             color: white;
         }
-        /* Estilo para o modal de confirmação */
-        .modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.7);
-            transition: opacity 0.3s ease;
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); }
+        .text-accent { color: var(--primary-neon); }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"] {
+            background-color: var(--accent-bg-light);
+            border: 1px solid var(--secondary-neon);
+            color: white;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--primary-neon);
+        }
+        .theme-selector button {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+            transition: transform 0.2s;
+        }
+        .theme-selector button:hover { transform: scale(1.1); }
+        .theme-selector button.active {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px white;
+        }
+        #loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-neon);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="text-white p-4 sm:p-6 md:p-8">
+<body class="p-4 sm:p-6 md:p-8">
 
-    <div id="app" class="max-w-4xl mx-auto">
-        <!-- Cabeçalho -->
-        <header class="text-center mb-8">
-            <div class="flex items-center justify-center gap-3">
-                <!-- Ícone de flor SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256" class="neon-text"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>
-                <h1 class="font-pacifico text-4xl md:text-5xl neon-text">Minhaeria</h1>
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256" class="neon-text"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>
-            </div>
-            <p class="text-pink-300 text-lg mt-2">de Alice Vasconcelos</p>
-        </header>
-
-        <!-- Painel de Progresso -->
-        <section id="progress-panel" class="neon-box bg-gray-900/50 rounded-2xl p-6 mb-8 text-center">
-            <h2 class="text-xl font-bold text-pink-300">Meu Progresso</h2>
-            <p id="total-saved" class="text-4xl font-bold neon-text my-3">R$ 0,00</p>
-            <div class="w-full bg-gray-700 rounded-full h-4">
-                <div id="progress-bar" class="progress-bar-inner h-4 rounded-full" style="width: 0%"></div>
-            </div>
-            <p id="progress-text" class="text-pink-300 mt-2">0% completo - Rumo aos R$ 1.000,00!</p>
-        </section>
-
-        <!-- Grade de Depósitos -->
-        <main id="deposits-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3">
-            <!-- Os itens de depósito serão gerados pelo JavaScript -->
-        </main>
-
-        <!-- Botão de Reiniciar -->
-        <footer class="text-center mt-8">
-            <button id="reset-button" class="neon-box text-pink-300 font-bold py-2 px-6 rounded-lg hover:bg-pink-500 hover:text-white hover:scale-105 transform transition">
-                Reiniciar Desafio
-            </button>
-        </footer>
+    <!-- Tela de Carregamento -->
+    <div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900/80 hidden">
+        <div id="loader"></div>
+        <p id="loading-text" class="mt-4 text-accent">Carregando...</p>
     </div>
 
-    <!-- Modal de Confirmação para Reiniciar -->
-    <div id="confirmation-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
-        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-sm w-full text-center">
-            <h3 class="text-2xl font-bold neon-text mb-4">Atenção!</h3>
-            <p class="text-pink-200 mb-6">Você tem certeza que quer reiniciar o desafio? Todo o seu progresso será perdido.</p>
-            <div class="flex justify-center gap-4">
-                <button id="confirm-reset-btn" class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition">Sim, reiniciar</button>
-                <button id="cancel-reset-btn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition">Cancelar</button>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="max-w-md mx-auto">
+         <header class="text-center mb-8">
+            <h1 class="font-pacifico text-5xl md:text-6xl neon-text">Minhaeria</h1>
+            <p class="text-accent text-lg mt-2">Seu cofre de sonhos</p>
+        </header>
+        <div class="neon-box bg-gray-900/50 rounded-2xl p-8 space-y-6">
+            <div>
+                <label for="email-input" class="block mb-2 font-bold text-accent">Email:</label>
+                <input type="email" id="email-input" placeholder="seu@email.com" class="w-full p-3 rounded-lg">
             </div>
+            <div>
+                <label for="password-input" class="block mb-2 font-bold text-accent">Senha:</label>
+                <input type="password" id="password-input" placeholder="••••••••" class="w-full p-3 rounded-lg">
+            </div>
+            <p id="login-error" class="text-red-400 text-center h-4"></p>
+            <button id="login-btn" class="w-full neon-button font-bold text-lg py-3 px-6 rounded-lg mt-4">Entrar</button>
         </div>
     </div>
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- CONFIGURAÇÕES ---
-            const GOAL = 1000;
-            const STORAGE_KEY = 'minhaeriaAliceProgress';
-            // Desafio dos 100 depósitos: 20x R$20 (400), 40x R$10 (400), 40x R$5 (200) = R$1000
-            const DEPOSIT_VALUES = [
-                ...Array(20).fill(20),
-                ...Array(40).fill(10),
-                ...Array(40).fill(5)
-            ];
+    <!-- Tela de Configuração da Meta -->
+    <div id="setup-screen" class="max-w-2xl mx-auto hidden">
+        <header class="text-center mb-8">
+            <h1 class="font-pacifico text-4xl md:text-5xl neon-text">Crie sua Meta</h1>
+            <p class="text-accent text-lg mt-2">Vamos começar um novo desafio!</p>
+        </header>
+        <div class="neon-box bg-gray-900/50 rounded-2xl p-6 space-y-6">
+            <div>
+                <label for="owner-name-input" class="block mb-2 font-bold text-accent">Seu Nome (Proprietário):</label>
+                <input type="text" id="owner-name-input" placeholder="Ex: Alice Vasconcelos" class="w-full p-2 rounded-lg">
+            </div>
+            <div>
+                <label for="goal-name-input" class="block mb-2 font-bold text-accent">Nome da Meta:</label>
+                <input type="text" id="goal-name-input" placeholder="Ex: Viagem para a praia" class="w-full p-2 rounded-lg">
+            </div>
+            <div>
+                <label class="block mb-2 font-bold text-accent">Valores para Depositar:</label>
+                <div id="parcels-container" class="space-y-3"></div>
+                <button id="add-parcel-btn" class="neon-button font-semibold py-2 px-4 rounded-lg mt-4 text-sm">+ Adicionar tipo de depósito</button>
+            </div>
+            <div class="text-center pt-4">
+                <p class="text-accent">Total do Desafio:</p>
+                <p id="calculated-total" class="text-3xl font-bold neon-text">R$ 0,00</p>
+            </div>
+            <button id="start-challenge-btn" class="w-full neon-button font-bold text-lg py-3 px-6 rounded-lg mt-4">Começar Desafio!</button>
+        </div>
+        <footer class="text-center mt-8">
+            <div id="theme-selector-setup" class="theme-selector flex justify-center items-center gap-4"></div>
+        </footer>
+    </div>
 
-            // --- ELEMENTOS DO DOM ---
-            const grid = document.getElementById('deposits-grid');
-            const totalSavedEl = document.getElementById('total-saved');
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
-            const resetButton = document.getElementById('reset-button');
-            const modal = document.getElementById('confirmation-modal');
-            const confirmResetBtn = document.getElementById('confirm-reset-btn');
-            const cancelResetBtn = document.getElementById('cancel-reset-btn');
+    <!-- Tela Principal do Desafio -->
+    <div id="app-screen" class="max-w-4xl mx-auto hidden">
+        <header class="text-center mb-8">
+            <h1 id="goal-title" class="font-pacifico text-4xl md:text-5xl neon-text"></h1>
+            <p id="goal-owner" class="text-accent text-lg mt-2"></p>
+        </header>
+        <section id="progress-panel" class="neon-box bg-gray-900/50 rounded-2xl p-6 mb-8 text-center">
+            <h2 class="text-xl font-bold text-accent">Meu Progresso</h2>
+            <p id="total-saved" class="text-4xl font-bold neon-text my-3">R$ 0,00</p>
+            <div class="w-full bg-gray-700 rounded-full h-4"><div id="progress-bar" class="progress-bar-inner h-4 rounded-full" style="width: 0%"></div></div>
+            <p id="progress-text" class="text-accent mt-2"></p>
+        </section>
+        <main id="deposits-grid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 md:gap-3"></main>
+        <footer class="text-center mt-8">
+            <div class="mb-6 flex justify-center items-center gap-4">
+                <button id="reset-button" class="neon-button font-bold py-2 px-6 rounded-lg">Reiniciar Progresso</button>
+                <button id="new-goal-button" class="neon-button font-bold py-2 px-6 rounded-lg">Criar Nova Meta</button>
+                <button id="logout-btn" class="bg-red-500/50 border border-red-500 text-red-300 font-bold py-2 px-6 rounded-lg hover:bg-red-500 hover:text-white">Sair</button>
+            </div>
+            <div id="theme-selector-app" class="theme-selector flex justify-center items-center gap-4"></div>
+        </footer>
+    </div>
 
-            let markedIndices = [];
+    <!-- Modais -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-sm w-full text-center">
+            <h3 id="modal-title" class="text-2xl font-bold neon-text mb-4"></h3>
+            <p id="modal-text" class="text-accent mb-6"></p>
+            <div class="flex justify-center gap-4">
+                <button id="confirm-btn" class="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition">Sim</button>
+                <button id="cancel-btn" class="bg-gray-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-700 transition">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div id="motivation-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+        <div class="neon-box bg-gray-800 rounded-2xl p-8 max-w-sm w-full text-center">
+            <h3 id="motivation-title" class="text-2xl font-bold neon-text mb-4"></h3>
+            <p id="motivation-text" class="text-accent mb-6"></p>
+            <button id="motivation-close-btn" class="neon-button font-bold py-2 px-6 rounded-lg">Continuar!</button>
+        </div>
+    </div>
 
-            // --- FUNÇÕES ---
+    <script type="module">
+        // Importações do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            // Função para embaralhar os valores do depósito
-            function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+        // Configuração do Firebase
+        const firebaseConfig = {
+          apiKey: "AIzaSyAN4BkMo5D36jlIZnaK6e6S4PZFoLWz7yM",
+          authDomain: "cofre-online.firebaseapp.com",
+          projectId: "cofre-online",
+          storageBucket: "cofre-online.appspot.com", 
+          messagingSenderId: "424084029673",
+          appId: "1:424084029673:web:b05a4630d400c96a6bb078"
+        };
+
+        // =================================================================================
+        // NOTA IMPORTANTE SOBRE AS REGRAS DE SEGURANÇA DO FIREBASE
+        // =================================================================================
+        // Para que este aplicativo funcione, você PRECISA atualizar as regras de segurança
+        // do seu Firestore no painel do Firebase. 
+        //
+        // 1. Vá para o seu projeto no console do Firebase.
+        // 2. No menu à esquerda, vá em "Build" -> "Firestore Database".
+        // 3. Clique na aba "Regras" (Rules).
+        // 4. Substitua o conteúdo existente por estas regras:
+        //
+        // rules_version = '2';
+        // service cloud.firestore {
+        //   match /databases/{database}/documents {
+        //     match /goals/{userId} {
+        //       allow read, write: if request.auth != null && request.auth.uid == userId;
+        //     }
+        //   }
+        // }
+        //
+        // 5. Clique em "Publicar". 
+        // =================================================================================
+
+        // Inicialização do Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DEFINIÇÃO DOS TEMAS ---
+        const THEMES = {
+            'neon-pink': { name: 'Rosa Neon', color: '#f871b5' }, 'galaxy': { name: 'Azul Galáxia', color: '#22d3ee' }, 'nature': { name: 'Verde Natureza', color: '#34d399' }, 'magic': { name: 'Roxo Mágico', color: '#c084fc' }
+        };
+        
+        // --- MENSAGENS DE MOTIVAÇÃO ---
+        const MOTIVATIONAL_MESSAGES = {
+            5: "É isso aí! O primeiro passo é o mais importante. Continue assim!", 10: "Incrível! Você já alcançou 10% da sua meta. Cada depósito conta!", 15: "Você está pegando o ritmo! Continue focada e verá os resultados.", 20: "Um quinto do caminho já foi! Sua dedicação está fazendo a diferença.", 25: "Parabéns! Você chegou a 1/4 da sua meta. Você é imparável!", 30: "Olha só esse progresso! Você está cada vez mais perto.", 35: "Continue brilhando! Sua disciplina é sua maior aliada.", 40: "Uau! Quase na metade. O resultado final será muito gratificante.", 45: "Falta muito pouco para a metade! Você está mandando muito bem.", 50: "METADE DO CAMINHO! 🎉 Você é incrível! Comemore essa grande conquista.", 55: "A maior parte já foi! Agora é manter o foco na reta final.", 60: "Excelente! Você está construindo seu sonho, depósito por depósito.", 65: "Sua determinação é inspiradora. Continue com essa energia!", 70: "70% e contando! O cheirinho de vitória está no ar.", 75: "Parabéns! 3/4 da meta concluídos. Falta pouco, não desista agora!", 80: "Você está na reta final! Visualize seu objetivo se tornando realidade.", 85: "Quase lá! Cada centavo te deixa mais perto do seu sonho.", 90: "SÓ FALTAM 10%! Você consegue, a linha de chegada está logo ali!", 95: "Está por um fio! O último esforço é o que te levará à glória.", 100: "VOCÊ CONSEGUIU! PARABÉNS! 🎉 Celebre muito! Você realizou sua meta e provou que é capaz de tudo!"
+        };
+
+        // --- ELEMENTOS DO DOM ---
+        const loadingScreen = document.getElementById('loading-screen'), loadingText = document.getElementById('loading-text');
+        const loginScreen = document.getElementById('login-screen'), emailInput = document.getElementById('email-input'), passwordInput = document.getElementById('password-input'), loginBtn = document.getElementById('login-btn'), loginError = document.getElementById('login-error');
+        const setupScreen = document.getElementById('setup-screen'), appScreen = document.getElementById('app-screen');
+        const ownerNameInput = document.getElementById('owner-name-input'), goalNameInput = document.getElementById('goal-name-input'), parcelsContainer = document.getElementById('parcels-container'), addParcelBtn = document.getElementById('add-parcel-btn'), calculatedTotalEl = document.getElementById('calculated-total'), startChallengeBtn = document.getElementById('start-challenge-btn');
+        const goalTitle = document.getElementById('goal-title'), goalOwner = document.getElementById('goal-owner'), totalSavedEl = document.getElementById('total-saved'), progressBar = document.getElementById('progress-bar'), progressText = document.getElementById('progress-text'), depositsGrid = document.getElementById('deposits-grid');
+        const resetButton = document.getElementById('reset-button'), newGoalButton = document.getElementById('new-goal-button'), logoutBtn = document.getElementById('logout-btn');
+        const modal = document.getElementById('confirmation-modal'), modalTitle = document.getElementById('modal-title'), modalText = document.getElementById('modal-text'), confirmBtn = document.getElementById('confirm-btn'), cancelBtn = document.getElementById('cancel-btn');
+        const motivationModal = document.getElementById('motivation-modal'), motivationTitle = document.getElementById('motivation-title'), motivationText = document.getElementById('motivation-text'), motivationCloseBtn = document.getElementById('motivation-close-btn');
+        const themeSelectors = [document.getElementById('theme-selector-setup'), document.getElementById('theme-selector-app')];
+
+        let currentGoal = null, confirmAction = null, audioReady = false, userId = null;
+
+        // --- CONFIGURAÇÃO DE ÁUDIO (Tone.js) ---
+        const markSynth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 } }).toDestination();
+        const unmarkSynth = new Tone.NoiseSynth({ noise: { type: 'white' }, envelope: { attack: 0.001, decay: 0.1, sustain: 0 } }).toDestination();
+        const milestoneSynth = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 } }).toDestination();
+        function playSound(type) {
+            if (!audioReady) return;
+            if (type === 'mark') markSynth.triggerAttackRelease("C5", "8n");
+            else if (type === 'unmark') unmarkSynth.triggerAttackRelease("0.1");
+            else if (type === 'milestone') milestoneSynth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "8n", Tone.now());
+        }
+        function initAudio() { if (!audioReady) { Tone.start(); audioReady = true; } }
+        document.body.addEventListener('click', initAudio, { once: true });
+
+        // --- FUNÇÕES DE TEMA ---
+        function applyTheme(themeKey) {
+            document.body.dataset.theme = themeKey;
+            themeSelectors.forEach(s => s.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.theme === themeKey)));
+        }
+        async function saveAndApplyTheme(themeKey) {
+            applyTheme(themeKey);
+            if (userId) {
+                if (currentGoal) {
+                    currentGoal.theme = themeKey;
                 }
-                return array;
-            }
-
-            // Função para renderizar a grade de depósitos
-            function renderGrid() {
-                grid.innerHTML = ''; // Limpa a grade antes de renderizar
-                const shuffledValues = shuffleArray([...DEPOSIT_VALUES]);
-
-                shuffledValues.forEach((value, index) => {
-                    const item = document.createElement('button');
-                    item.className = 'deposit-item h-12 w-full rounded-lg font-bold text-lg flex items-center justify-center';
-                    item.dataset.index = index;
-                    item.dataset.value = value;
-                    
-                    const valueSpan = document.createElement('span');
-                    valueSpan.textContent = value;
-
-                    // Ícone de flor para quando o item for marcado
-                    const flowerIcon = document.createElement('span');
-                    flowerIcon.className = 'flower-icon';
-                    flowerIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>`;
-                    
-                    item.appendChild(valueSpan);
-                    item.appendChild(flowerIcon);
-                    
-                    item.addEventListener('click', () => toggleMark(index));
-                    grid.appendChild(item);
-                });
-            }
-
-            // Função para marcar/desmarcar um item
-            function toggleMark(index) {
-                const itemEl = grid.querySelector(`[data-index='${index}']`);
-                if (markedIndices.includes(index)) {
-                    // Desmarcar
-                    markedIndices = markedIndices.filter(i => i !== index);
-                    itemEl.classList.remove('marked');
-                } else {
-                    // Marcar
-                    markedIndices.push(index);
-                    itemEl.classList.add('marked');
-                }
-                saveProgress();
-                updateUI();
-            }
-
-            // Função para atualizar a interface (total, barra de progresso)
-            function updateUI() {
-                // Atualiza os itens marcados na grade
-                document.querySelectorAll('.deposit-item').forEach(item => {
-                    const index = parseInt(item.dataset.index);
-                    if (markedIndices.includes(index)) {
-                        item.classList.add('marked');
-                    } else {
-                        item.classList.remove('marked');
-                    }
-                });
-
-                // Calcula o total salvo
-                const totalSaved = markedIndices.reduce((sum, index) => {
-                    const itemEl = grid.querySelector(`[data-index='${index}']`);
-                    return sum + parseFloat(itemEl.dataset.value);
-                }, 0);
-
-                // Calcula a porcentagem do progresso
-                const progressPercentage = (totalSaved / GOAL) * 100;
-
-                // Atualiza os elementos do DOM
-                totalSavedEl.textContent = `R$ ${totalSaved.toFixed(2).replace('.', ',')}`;
-                progressBar.style.width = `${progressPercentage}%`;
-                progressText.textContent = `${Math.floor(progressPercentage)}% completo - Rumo aos R$ ${GOAL.toFixed(2).replace('.', ',')}!`;
-
-                if (progressPercentage >= 100) {
-                    progressText.textContent = "Parabéns! Você alcançou sua meta de R$ 1.000,00!";
-                    totalSavedEl.classList.add('animate-pulse');
-                } else {
-                    totalSavedEl.classList.remove('animate-pulse');
+                try {
+                    const goalRef = doc(db, "goals", userId);
+                    await setDoc(goalRef, { theme: themeKey }, { merge: true });
+                } catch (error) {
+                    console.error("Erro ao salvar preferência de tema:", error);
                 }
             }
-
-            // Função para salvar o progresso no localStorage
-            function saveProgress() {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(markedIndices));
-            }
-
-            // Função para carregar o progresso do localStorage
-            function loadProgress() {
-                const savedData = localStorage.getItem(STORAGE_KEY);
-                if (savedData) {
-                    markedIndices = JSON.parse(savedData);
-                }
-            }
-
-            // Função para reiniciar o desafio
-            function resetChallenge() {
-                markedIndices = [];
-                saveProgress();
-                updateUI();
-                hideModal();
-            }
-            
-            // Funções do Modal
-            function showModal() {
-                modal.classList.remove('hidden');
-            }
-
-            function hideModal() {
-                modal.classList.add('hidden');
-            }
-
-            // --- INICIALIZAÇÃO E EVENTOS ---
-            renderGrid();
-            loadProgress();
-            updateUI();
-            
-            resetButton.addEventListener('click', showModal);
-            confirmResetBtn.addEventListener('click', resetChallenge);
-            cancelResetBtn.addEventListener('click', hideModal);
-            // Fechar modal se clicar fora
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    hideModal();
+        }
+        function renderThemeSelectors() {
+            themeSelectors.forEach(selector => {
+                selector.innerHTML = '';
+                for (const [key, theme] of Object.entries(THEMES)) {
+                    const button = document.createElement('button');
+                    button.dataset.theme = key; button.style.backgroundColor = theme.color; button.title = theme.name;
+                    button.addEventListener('click', () => saveAndApplyTheme(key));
+                    selector.appendChild(button);
                 }
             });
+        }
+
+        // --- FUNÇÕES DE DADOS (FIRESTORE) ---
+        async function saveGoal() {
+            if (!userId || !currentGoal) return;
+            try {
+                const goalRef = doc(db, "goals", userId);
+                await setDoc(goalRef, currentGoal);
+            } catch (error) {
+                console.error("Erro ao salvar dados:", error);
+            }
+        }
+        async function loadGoal() {
+            if (!userId) return;
+            const goalRef = doc(db, "goals", userId);
+            const docSnap = await getDoc(goalRef);
+            currentGoal = docSnap.exists() ? docSnap.data() : null;
+        }
+        async function deleteGoal() {
+            if (!userId) return;
+            try {
+                await deleteDoc(doc(db, "goals", userId));
+            } catch (error) {
+                console.error("Erro ao deletar meta:", error);
+            }
+        }
+
+        // --- FUNÇÕES DE CONFIGURAÇÃO (SETUP) ---
+        function addParcelRow() {
+            const parcelDiv = document.createElement('div');
+            parcelDiv.className = 'flex items-center gap-2 parcel-row';
+            parcelDiv.innerHTML = `<input type="number" class="w-1/3 p-2 rounded-lg parcel-quantity" placeholder="Qtd."><span class="text-accent">depósitos de R$</span><input type="number" class="w-1/3 p-2 rounded-lg parcel-value" placeholder="Valor"><button class="text-red-400 hover:text-red-600 remove-parcel-btn">✖</button>`;
+            parcelsContainer.appendChild(parcelDiv);
+            parcelDiv.querySelector('.remove-parcel-btn').addEventListener('click', () => { parcelDiv.remove(); updateCalculatedTotal(); });
+            parcelDiv.querySelectorAll('input').forEach(input => input.addEventListener('input', updateCalculatedTotal));
+        }
+        function updateCalculatedTotal() {
+            let total = 0;
+            document.querySelectorAll('.parcel-row').forEach(row => {
+                const quantity = parseFloat(row.querySelector('.parcel-quantity').value) || 0;
+                const value = parseFloat(row.querySelector('.parcel-value').value) || 0;
+                total += quantity * value;
+            });
+            calculatedTotalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+        async function startNewChallenge() {
+            const ownerName = ownerNameInput.value.trim();
+            const goalName = goalNameInput.value.trim();
+            if (!ownerName) {
+                alert('Por favor, insira o nome do proprietário.');
+                return;
+            }
+            if (!goalName) {
+                alert('Por favor, dê um nome para a sua meta.');
+                return;
+            }
+            const deposits = [];
+            let total = 0;
+            document.querySelectorAll('.parcel-row').forEach(row => {
+                const quantity = parseInt(row.querySelector('.parcel-quantity').value), value = parseFloat(row.querySelector('.parcel-value').value);
+                if (quantity > 0 && value > 0) { for (let i = 0; i < quantity; i++) deposits.push(value); total += quantity * value; }
+            });
+            if (deposits.length === 0) { alert('Por favor, adicione pelo menos um tipo de depósito válido.'); return; }
+            const selectedTheme = document.body.dataset.theme || 'neon-pink';
+            currentGoal = { owner: ownerName, name: goalName, total: total, deposits: deposits, markedIndices: [], lastMilestoneAchieved: 0, theme: selectedTheme };
+            loadingScreen.classList.remove('hidden');
+            await saveGoal();
+            await initializeAppUI();
+        }
+
+        // --- FUNÇÕES PRINCIPAIS DO APP ---
+        function renderGrid() {
+            depositsGrid.innerHTML = '';
+            const shuffledDeposits = [...currentGoal.deposits].sort(() => Math.random() - 0.5);
+            shuffledDeposits.forEach((value, index) => {
+                const item = document.createElement('button');
+                item.className = 'deposit-item h-12 w-full rounded-lg font-bold text-lg flex items-center justify-center';
+                item.dataset.index = index; item.dataset.value = value;
+                const valueSpan = document.createElement('span'); valueSpan.textContent = value.toLocaleString('pt-BR');
+                const flowerIcon = document.createElement('span'); flowerIcon.className = 'flower-icon';
+                flowerIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96m-32 0a64 64 0 0 0-57.6-63.54a64.3 64.3 0 0 0-12.8 0A64 64 0 0 0 64 128a64 64 0 0 0 63.54 57.6a64.3 64.3 0 0 0 12.8 0A64 64 0 0 0 192 128m-89.42 41.42a8 8 0 0 0-11.31-11.31L128 121.31l-36.72 36.72a8 8 0 0 0-11.31-11.31L116.69 128l-36.72-36.72a8 8 0 0 0 11.31-11.31L128 116.69l36.72-36.72a8 8 0 0 0 11.31 11.31L139.31 128l36.72 36.72a8 8 0 0 0 0 11.31a8 8 0 0 0-5.65 2.35Z"/></svg>`;
+                item.appendChild(valueSpan); item.appendChild(flowerIcon);
+                item.addEventListener('click', () => toggleMark(index));
+                depositsGrid.appendChild(item);
+            });
+        }
+        async function toggleMark(index) {
+            const alreadyMarked = currentGoal.markedIndices.includes(index);
+            if (alreadyMarked) {
+                currentGoal.markedIndices = currentGoal.markedIndices.filter(i => i !== index);
+                playSound('unmark');
+            } else {
+                currentGoal.markedIndices.push(index);
+                playSound('mark');
+                await checkMilestone();
+            }
+            await saveGoal();
+            updateUI();
+        }
+        async function checkMilestone() {
+            const totalSaved = currentGoal.markedIndices.reduce((sum, i) => sum + parseFloat(currentGoal.deposits[i]), 0);
+            const progressPercentage = currentGoal.total > 0 ? (totalSaved / currentGoal.total) * 100 : 0;
+            const lastMilestone = currentGoal.lastMilestoneAchieved || 0;
+            let nextMilestone = 0;
+            for (let m = 5; m <= 100; m += 5) {
+                if (progressPercentage >= m && m > lastMilestone) { nextMilestone = m; }
+            }
+            if (nextMilestone > lastMilestone) {
+                currentGoal.lastMilestoneAchieved = nextMilestone;
+                showMotivationModal(`🎉 ${nextMilestone}% Alcançado! 🎉`, MOTIVATIONAL_MESSAGES[nextMilestone]);
+                playSound('milestone');
+                await saveGoal();
+            }
+        }
+        function updateUI() {
+            goalTitle.textContent = currentGoal.name;
+            goalOwner.textContent = `de ${currentGoal.owner || 'Proprietário'}`;
+            document.querySelectorAll('.deposit-item').forEach(item => {
+                const index = parseInt(item.dataset.index);
+                item.classList.toggle('marked', currentGoal.markedIndices.includes(index));
+            });
+            const totalSaved = currentGoal.markedIndices.reduce((sum, i) => sum + parseFloat(currentGoal.deposits[i]), 0);
+            const progressPercentage = currentGoal.total > 0 ? (totalSaved / currentGoal.total) * 100 : 0;
+            totalSavedEl.textContent = `R$ ${totalSaved.toFixed(2).replace('.', ',')}`;
+            progressBar.style.width = `${progressPercentage}%`;
+            const goalTotalFormatted = currentGoal.total.toFixed(2).replace('.', ',');
+            progressText.textContent = `${Math.floor(progressPercentage)}% completo - Rumo aos R$ ${goalTotalFormatted}!`;
+            if (progressPercentage >= 100) {
+                progressText.textContent = `Parabéns! Você alcançou sua meta de R$ ${goalTotalFormatted}!`;
+                totalSavedEl.classList.add('animate-pulse');
+            } else {
+                totalSavedEl.classList.remove('animate-pulse');
+            }
+        }
+
+        // --- FUNÇÕES DE ESTADO ---
+        async function resetProgress() { 
+            currentGoal.markedIndices = []; currentGoal.lastMilestoneAchieved = 0; 
+            await saveGoal(); updateUI(); hideModal(); 
+        }
+        async function createNewGoal() { 
+            await deleteGoal(); currentGoal = null; 
+            hideModal(); await initializeAppUI(); 
+        }
+
+        // --- FUNÇÕES DO MODAL ---
+        function showModal(type) {
+            if (type === 'reset') {
+                modalTitle.textContent = 'Reiniciar Progresso?'; modalText.textContent = 'Tem certeza? Todo o progresso desta meta será perdido.'; confirmAction = resetProgress;
+            } else if (type === 'new') {
+                modalTitle.textContent = 'Criar Nova Meta?'; modalText.textContent = 'Isso irá apagar a meta atual e todo o seu progresso. Deseja continuar?'; confirmAction = createNewGoal;
+            }
+            modal.classList.remove('hidden');
+        }
+        function hideModal() { modal.classList.add('hidden'); confirmAction = null; }
+        function showMotivationModal(title, text) {
+            motivationTitle.textContent = title; motivationText.textContent = text;
+            motivationModal.classList.remove('hidden');
+        }
+        function hideMotivationModal() { motivationModal.classList.add('hidden'); }
+
+        // --- INICIALIZAÇÃO E LÓGICA DE UI ---
+        async function initializeAppUI() {
+            try {
+                loadingText.textContent = 'Carregando seu cofre...';
+                loadingScreen.classList.remove('hidden');
+                renderThemeSelectors();
+                await loadGoal();
+                if (currentGoal) {
+                    applyTheme(currentGoal.theme || 'neon-pink');
+                    appScreen.classList.remove('hidden');
+                    setupScreen.classList.add('hidden');
+                    loginScreen.classList.add('hidden');
+                    renderGrid(); updateUI();
+                } else {
+                    applyTheme('neon-pink');
+                    setupScreen.classList.remove('hidden');
+                    appScreen.classList.add('hidden');
+                    loginScreen.classList.add('hidden');
+                    parcelsContainer.innerHTML = ''; addParcelRow();
+                    ownerNameInput.value = '';
+                    goalNameInput.value = ''; updateCalculatedTotal();
+                }
+            } catch (error) {
+                console.error("ERRO FATAL:", error);
+                loadingText.textContent = 'Erro de permissão. Fale com o admin.';
+                return; 
+            }
+            loadingScreen.classList.add('hidden');
+        }
+        
+        // --- EVENT LISTENERS ---
+        addParcelBtn.addEventListener('click', addParcelRow);
+        startChallengeBtn.addEventListener('click', startNewChallenge);
+        resetButton.addEventListener('click', () => showModal('reset'));
+        newGoalButton.addEventListener('click', () => showModal('new'));
+        confirmBtn.addEventListener('click', async () => { if (typeof confirmAction === 'function') await confirmAction(); });
+        cancelBtn.addEventListener('click', hideModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+        motivationCloseBtn.addEventListener('click', hideMotivationModal);
+        motivationModal.addEventListener('click', (e) => { if (e.target === motivationModal) hideMotivationModal(); });
+
+        loginBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            loginError.textContent = '';
+            if (!email || !password) {
+                loginError.textContent = 'Por favor, preencha e-mail e senha.';
+                return;
+            }
+            loadingText.textContent = 'Entrando...';
+            loadingScreen.classList.remove('hidden');
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                loginError.textContent = 'E-mail ou senha inválidos.';
+                loadingScreen.classList.add('hidden');
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+        });
+
+        // --- PONTO DE ENTRADA PRINCIPAL ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                await initializeAppUI();
+            } else {
+                userId = null;
+                currentGoal = null;
+                loginScreen.classList.remove('hidden');
+                appScreen.classList.add('hidden');
+                setupScreen.classList.add('hidden');
+                loadingScreen.classList.add('hidden');
+            }
         });
     </script>
-
 </body>
 </html>
